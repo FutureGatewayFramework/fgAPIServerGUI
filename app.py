@@ -7,11 +7,13 @@ webapp = {
   'logged': False,
   'configured': False,
   'user': None,
-  'apiserver': 'http://localhost/fgapiserver'
+  'apiserver': 'http://localhost/fgapiserver',
+  'page': None
 }
 
 @app.route('/')
 def index():
+    webapp['page'] = 'Dashboard'
     return render_template('index.html', webapp=webapp)
 
 if __name__ == '__main__':

@@ -12,4 +12,9 @@
 {% else %}
 <h1>Index (!logged)</h1>
 {% endif %}
+{% if webapp.configured %}
+<h1>Index (configured)</h1>
+{% else %}
+<h1>Index (!configured)</h1>
+{% endif %}
 {% endblock %}

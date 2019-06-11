@@ -4,9 +4,6 @@
 This project does not use Flask-bootstrap since it uses the third party theme startbootstrap-sb-admin which provides the necessar files.
 In order to setup the GUI, please execute the following commands:
 
-# startbootstrap-sb-admin Theme
-Theme has been taken from: 
-
 ## Theme
 This repository provides a copy of the startbootstrap-sb-admin theme, however it can be downloaded by `git clone https://github.com/BlackrockDigital/startbootstrap-sb-admin.git`
 
