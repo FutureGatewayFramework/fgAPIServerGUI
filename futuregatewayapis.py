@@ -1,12 +1,39 @@
-#!/bin/env python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (c) 2015:
+# Istituto Nazionale di Fisica Nucleare (INFN), Italy
+#
+# See http://www.infn.it  for details on the copyrigh holder
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import base64
 import logging
 import requests
 import json
 
+__author__ = 'Riccardo Bruno'
+__copyright__ = '2019'
+__license__ = 'Apache'
+__version__ = 'v0.0.0'
+__maintainer__ = 'Riccardo Bruno'
+__email__ = 'riccardo.bruno@ct.infn.it'
+__status__ = 'devel'
+__update__ = '2019-05-03 17:04:36'
+
 # Custom logger
-_log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AuthParams():
@@ -81,7 +108,7 @@ class FutureGatewayAPIs():
         self.ptvToken = ''
         self.baselineToken = ''
         self.errFlag = False
-        _log.debug('Created FutureGatewayAPIs: \'%s\'' % self)
+        logging.debug('Created FutureGatewayAPIs: \'%s\'' % self)
 
     def __str__(self):
         """
@@ -110,7 +137,7 @@ class FutureGatewayAPIs():
         """
         Verify if the server responds and check APIs version match
         """
-        _log.debug("setAuthMode(%s)" % mode)
+        logging.debug("setAuthMode(%s)" % mode)
         self.currentAuth = mode
 
     def checkServer(self):
@@ -119,19 +146,19 @@ class FutureGatewayAPIs():
         this method is useful to switch between user and
         delegated tokens
         """
-        _log.debug("checkServer")
+        logging.debug("checkServer")
         json = self.doGet("");
         return not self.errFlag
 
     def setBaselineToken(self, accessToken):
-        _log.debug("setBaselineToken(%s)" % accessToken)
+        logging.debug("setBaselineToken(%s)" % accessToken)
         self.baselineToken = accessToken
 
     def setPTVToken(self, ptvToken):
         """
         Set PTV token
         """
-        _log.debug("setPTVToken(%s)" % ptvToken)
+        logging.debug("setPTVToken(%s)" % ptvToken)
         self.ptvToken = ptvToken
 
     def getAccessToken(self, username, userdel):
@@ -140,7 +167,7 @@ class FutureGatewayAPIs():
         the method returns the delegated token and class member baselineToken 
         will be updated accordingly
         """
-        _log.debug("getAccessToken(%s, %s)" % (username, userdel))
+        logging.debug("getAccessToken(%s, %s)" % (username, userdel))
         # Endpoint auth/ is the only one requiring BASELINE_PARAMS credentials
         # Current Auth value will be switched to this mode during this method
         # Previous authentication mode will be restored to its original value
@@ -161,14 +188,14 @@ class FutureGatewayAPIs():
                 self.errFlag = True;
                 self.errMessage = "Empty token retrieved for user: '" + username + "'";
         self.currentAuth = prevAuth;
-        _log.debug("baselineToken: '" + self.baselineToken + "'");
+        logging.debug("baselineToken: '" + self.baselineToken + "'");
         return self.baselineToken;
 
     def userExists(self, username):
         """
         Verify if the specified user exists
         """
-        _log.debug('userExists(%s)' % username)
+        logging.debug('userExists(%s)' % username)
         jsonResult = self.doGet('users/' + username)
         return not self.errFlag and jsonResult.get('name',None) == username
 
@@ -181,26 +208,26 @@ class FutureGatewayAPIs():
         """
         Create a FutureGateway user
         """
-        _log.debug("createUser(%s, %s, %s, %s, %s)"
+        logging.debug("createUser(%s, %s, %s, %s, %s)"
                    % (name, firstName, lastName, mail, institute));
         data = {'first_name': firstName,
                 'last_name': lastName,
                 'mail': mail,
                 'institute': institute}
-        _log.debug('jsonData: %s' % data)
+        logging.debug('jsonData: %s' % data)
         jsonResult = self.doPost('users/%s' % name, data)
         if self.errFlag is True:
             errMessage = "Unable to create json object from json data: '%s'" % jsonData
-            _log.error(self.errMessage)
+            logging.error(self.errMessage)
         return not self.errFlag
 
     def addUserGroups(self, userName, userGroups):
         """
         Add a given list of groups to a given user
         """
-        _log.debug("addUserGroups")
+        logging.debug("addUserGroups")
         data = { 'groups': userGroups}
-        _log.debug("jsonData: '" + jsonData + "'");
+        logging.debug("jsonData: '" + jsonData + "'");
         jsonResult = self.doPost("users/" + userName + "/groups", data)
         if self.errFlag is True:
             errMessage = "Unable to add groups: '%s'" % (userGroups, userName)
@@ -210,20 +237,20 @@ class FutureGatewayAPIs():
         """
         Delete a given list of groups to a given user
         """
-        _log.debug("removeUserGroups");
+        logging.debug("removeUserGroups");
         data = { 'groups': userGroups }
-        _log.debug("jsonData: '" + jsonData + "'");
+        logging.debug("jsonData: '" + jsonData + "'");
         jsonResult = self.doDelete("users/" + userName + "/groups", data)
         if self.errFlag is True:
             errMessage = "Unable to remove groups: '%s' to user: '%s'" % (userGroups, userName)
-            _log.error(errMessage)
+            logging.error(errMessage)
         return not self.errFlag;
 
     def getUserGroups(self, userName):
         """
         Return the list groups assigned to a specified user
         """
-        _log.debug("getUserGroups");
+        logging.debug("getUserGroups");
         jsonResult = self.doGet("users/" + userName + "/groups")
         if jsonResult is not None:
             groups = jsonResult.get("groups", None)
@@ -233,7 +260,7 @@ class FutureGatewayAPIs():
         """
         Return true if the specified user has the specified group
         """
-        _log.debug("userHasGroup")
+        logging.debug("userHasGroup")
         groups = self.getUserGroups(userName)
         if(groups != null):
             for group in groups:
@@ -262,7 +289,7 @@ class FutureGatewayAPIs():
                 textRequest += "&" + authParams.getAuthParams()
             except ValueError:
                 textRequest += "?" + authParams.getAuthParams()
-        _log.debug("Request: '" + textRequest + "'")
+        logging.debug("Request: '" + textRequest + "'")
         return textRequest;
 
     def doGet(self, endpoint):
@@ -272,19 +299,19 @@ class FutureGatewayAPIs():
         jsonResult = ''
         authParams = AuthParams(self.currentAuth, self)
         fgTextRequest = self.initFGRequest(endpoint, authParams)
-        _log.debug("GET (request: %s)" % fgTextRequest)
+        logging.debug("GET (request: %s)" % fgTextRequest)
         #Prepare and execute the GET request
         headers = {'Cache-Control': 'no-cache'}
         if(authParams.isAuthHeader() is True):
             headers['Authorization'] = authParams.getAuthHeader()
-            _log.debug("Authorization: " + authParams.getAuthHeader())
+            logging.debug("Authorization: " + authParams.getAuthHeader())
         try:
             r = requests.get(url=fgTextRequest,
                              headers=headers)
             jsonResult = r.json()
         except requests.exceptions.RequestException as e:
             self.setError(fgTextRequest, e)
-        _log.debug("GET (result: '%s')" % jsonResult)
+        logging.debug("GET (result: '%s')" % jsonResult)
         return jsonResult
 
     def doPost(self, endpoint, data):
@@ -294,13 +321,13 @@ class FutureGatewayAPIs():
         jsonResult = ''
         authParams = AuthParams(self.currentAuth, self)
         fgTextRequest = self.initFGRequest(endpoint, authParams)
-        _log.debug("POST (request: %s)" % fgTextRequest)
+        logging.debug("POST (request: %s)" % fgTextRequest)
         #Prepare and execute the GET request
         headers = {'Cache-Control': 'no-cache',
                    'Content-Type': 'application/json; charset=UTF-8'}
         if(authParams.isAuthHeader() is True):
             headers['Authorization'] = authParams.getAuthHeader()
-            _log.debug("Authorization: " + authParams.getAuthHeader())
+            logging.debug("Authorization: " + authParams.getAuthHeader())
         try:
             r = requests.post(url=fgTextRequest,
                               headers=headers,
@@ -309,7 +336,7 @@ class FutureGatewayAPIs():
             jsonResult = r.json()
         except requests.exceptions.RequestException as e:
             self.setError(fgTextRequest, e)
-        _log.debug("POST (result: '%s')" % jsonResult)
+        logging.debug("POST (result: '%s')" % jsonResult)
         return jsonResult
 
     def doDelete(self, endpoint, data):
@@ -319,13 +346,13 @@ class FutureGatewayAPIs():
         jsonResult = ''
         authParams = AuthParams(self.currentAuth, self)
         fgTextRequest = self.initFGRequest(endpoint, authParams)
-        _log.debug("DELETE (request: %s)" % fgTextRequest)
+        logging.debug("DELETE (request: %s)" % fgTextRequest)
         #Prepare and execute the GET request
         headers = {'Cache-Control': 'no-cache',
                    'Content-Type': 'application/json; charset=UTF-8'}
         if(authParams.isAuthHeader() is True):
             headers['Authorization'] = authParams.getAuthHeader()
-            _log.debug("Authorization: " + authParams.getAuthHeader())
+            logging.debug("Authorization: " + authParams.getAuthHeader())
         try:
             r = requests.delete(url=fgTextRequest,
                                 headers=headers,
@@ -333,7 +360,7 @@ class FutureGatewayAPIs():
             jsonResult = r.json()
         except requests.exceptions.RequestException as e:
             self.setError(fgTextRequest, e)
-        _log.debug("DELETE (result: '%s')" % jsonResult)
+        logging.debug("DELETE (result: '%s')" % jsonResult)
         return jsonResult
 
 if __name__ == '__main__':
