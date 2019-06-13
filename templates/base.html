@@ -42,17 +42,33 @@
 
     <!-- Navbar -->
     <ul class="navbar-nav ml-auto ml-md-0">
-     <li class="nav-item dropdown no-arrow">
-        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+     <li class="nav-item dropdown no-arrow mx1">
+        <a class="nav-link dropdown-toggle" href="#" id="confDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-cog"></i>
+          <span class="badge badge-danger">
+            {% if webapp['configured'] %}
+            <i class="fa fa-check"></i>
+            {% else %}
+            <i class="fas fa-times"></i>
+            {% endif %}
+          </span>
         </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="confDropdown">
           <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Configure</a>
         </div>
       </li>
+
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
+          <span class="badge badge-danger">
+            {% if webapp['logged'] %}
+              <i class="fa fa-check"></i>
+            {% else %}
+              <i class="fas fa-times"></i>
+            {% endif %}
+          </span>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Login</a>
