@@ -84,7 +84,6 @@ function updateInterface() {
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-times');
     $('#settingsNavIco').prop('class', 'badge badge-danger');
     $('#settingsNavIcoImg').prop('class', 'fas fa-times');
-    	
   }
   // FGAPI Logged user flag
   if(FGGUI.fg_logged) {
