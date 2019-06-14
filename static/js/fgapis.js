@@ -116,17 +116,20 @@ function doGet(url, successFunction, failureFunction) {
    });
 }
 
-/*
 function doPost(url, reqData, successFunction, failureFunction) {
+    var request_url = FGAPIs.fg_endpoint;
+    var request_url = initFGRequest(request_url);
+    var headers = {};
+    if(FGAPIs.isAuthHeader()) {
+      headers["Authorization"] = FGAPIs.getAuthHeader();
+    }
     $.ajax({
         type: "POST",
         url: url,
         dataType: "json",
         cache: false,
         data: JSON.stringify(reqData),
-        headers: {
-            'Authorization': fg_user_info.access_token,
-        },
+        headers: headers,
         contentType: 'application/json',
         crossDomain: true,
         success: successFunction,
@@ -135,18 +138,21 @@ function doPost(url, reqData, successFunction, failureFunction) {
 }
 
 function doDelete(url, successFunction, failureFunction) {
+    var request_url = FGAPIs.fg_endpoint;
+    var request_url = initFGRequest(request_url);
+    var headers = {};
+    if(FGAPIs.isAuthHeader()) {
+      headers["Authorization"] = FGAPIs.getAuthHeader();
+    }
     $.ajax({
         type: "DELETE",
         url: url,
         dataType: "json",
         cache: false,
-        headers: {
-            'Authorization': fg_user_info.access_token,
-        },
+        headers: headers,
         contentType: 'application/json',
         crossDomain: true,
         success: successFunction,
         error: failureFunction
    });
 }
-*/

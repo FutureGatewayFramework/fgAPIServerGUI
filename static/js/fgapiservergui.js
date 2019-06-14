@@ -46,6 +46,15 @@ FGGUI = {
     FGGUI.reset(fg_check);
     FGAPIs.reset(fg_check);
     updateInterface();
+  }),
+  l("#togglePasswordView").on('click', function() {
+    if($('#fgPassword').attr('type') == 'password') {
+      $('#fgPassword').attr('type','text');
+      $('#togglePasswordView').find('i').attr('class','fas fa-eye-slash');
+    } else {
+      $('#fgPassword').attr('type','password');
+      $('#togglePasswordView').find('i').attr('class','fas fa-eye');
+    }
   })
 }(jQuery);
 
@@ -70,20 +79,17 @@ function accessCookie(cookieName) {
 function updateInterface() {
   // FGAPI Server checked flag
   if(FGGUI.fg_checked) {
-    //$('#loginNav').hide();
-    //$('#settingsNav').show();
     $('#fgCheckedButton').prop('class', 'btn btn-primary');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-check');
     $('#settingsNavIco').prop('class', 'badge badge-primary');
     $('#settingsNavIcoImg').prop('class', 'fas fa-check');
     $('#loginNav').show();
   } else {
-    //$('#loginNav').show();
-    //$('#settingsNav').hide();
     $('#fgCheckedButton').prop('class', 'btn btn-danger');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-times');
     $('#settingsNavIco').prop('class', 'badge badge-danger');
     $('#settingsNavIcoImg').prop('class', 'fas fa-times');
+    $('#loginNav').hide();
   }
   // FGAPI Logged user flag
   if(FGGUI.fg_logged) {
@@ -106,7 +112,6 @@ $(document).ready(function() {
   var fg_endpoint = accessCookie('fg_endpoint');
   console.log("fg_endpoint: " + fg_endpoint);
   if(fg_endpoint == "") {
-    fg_endpoint = $('#fgTestURL').prop('placeholder');
     console.log("1st Time, endpoint: " + fg_endpoint);
     FGGUI.reset(fg_endpoint);
   } else {
@@ -123,4 +128,5 @@ $(document).ready(function() {
       }
     );
   }
+  updateInterface();
 });
