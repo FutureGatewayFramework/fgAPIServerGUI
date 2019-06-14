@@ -5,11 +5,17 @@
 // Store all FG GUI values
 FGGUI = {
   fg_endpoint: '',
+  fg_username: '',
+  fg_password: '',
+  fg_accesstoken: '',
   fg_checked: false,
   fg_logged: false,
 
   reset: function(endpoint) {
     this.fg_endpoint = endpoint;
+    this.fg_username = '';
+    this.fg_password = '';
+    this.fg_accesstoken = '';
     this.fg_checked = false;
     this.fg_logged = false;
   }
@@ -18,7 +24,8 @@ FGGUI = {
 !function(l){
   "use strict";
   // Settings Check Server Button click event
-  l("#checkFGAPIServer").on("click", function() {
+  l("#checkFGAPIServer").on("click", function(e) {
+    e.preventDefault();
     // FG endpoint to check
     var fg_check = $('#fgTestURL').prop('placeholder');
     //var fg_check = FGGUI.fg_endpoint;
@@ -27,13 +34,14 @@ FGGUI = {
     fg_check = fg_check.slice(-1)=='/'?fg_check:fg_check + '/';
     // Check the FG endpoint
     checkServer(fg_check,
-      function(data) {
-        FGGUI.fg_checked = true;
+      function(fgapis) {
         // Save last successfull FG endpoint
-        createCookie('fg_endpoint', $('#fgTestURL').prop('placeholder'), 365);
+        FGGUI.fg_endpoint = fgapis.fg_endpoint;
+        FGGUI.fg_checked = true;
+        createCookie('fg_endpoint', fgapis.fg_endpoint, 365);
         updateInterface();
       },
-      function(data) {
+      function(o) {
         FGGUI.fg_checked = false;
         updateInterface();
       }
@@ -55,6 +63,26 @@ FGGUI = {
       $('#fgPassword').attr('type','password');
       $('#togglePasswordView').find('i').attr('class','fas fa-eye');
     }
+  }),
+  l("#logSubmitButton").on('click', function(e) {
+    e.preventDefault();
+    loginServer(FGGUI.fg_endpoint,
+                $('#fgUsername').val(),
+                $('#fgPassword').val(),
+                function(data) {
+                  var token = data.token;
+                  FGGUI.fg_logged = true;
+                  FGGUI.fg_accesstoken = token;
+                  // Save last successfull FG access token
+                  createCookie('fg_accesstoken', token, 365);
+                  updateInterface();
+                  console.log('Logged successfully, token: ' + token);
+                },
+                function() {
+                  FGGUI.fg_logged = false;
+                  updateInterface();
+                  console.log('Logged unsuccessfully');
+                });
   })
 }(jQuery);
 
