@@ -73,11 +73,11 @@ function checkServer(fg_endpoint, successFn, failedFn) {
     doGet("",
       function(data) {
         FGAPIs.config = data['config'];
-        successFn()
+        successFn(data);
       },
       function(data) {
         FGAPIs.reset();
-        failedFn();
+        failedFn(data);
       });
 }
 

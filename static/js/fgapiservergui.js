@@ -21,13 +21,17 @@ FGGUI = {
     // Ensure the endpoint finishes with '/'
     fg_check = fg_check.slice(-1)=='/'?fg_check:fg_check + '/';
     // Check the FG endpoint
-    if(checkServer(fg_check)) {
-      FGUI.fg_checked = true;
-      createCookie('fg_endpoint', $('#fgTestURL').prop('placeholder'), 365);
-    } else {
-      FGUI.fg_checked = false;
-    }
-    updateInterface();
+    checkServer(fg_check,
+      function(data) {
+        FGGUI.fg_checked = true;
+        createCookie('fg_endpoint', $('#fgTestURL').prop('placeholder'), 365);
+        updateInterface();
+      },
+      function(data) {
+        FGGUI.fg_checked = false;
+        updateInterface();
+      }
+    );
   }),
   l("#checkFGAPIServer").on('input propertychange paste', function() {
     $('#fgCheckedButton').prop('class', 'btn btn-danger');
@@ -54,14 +58,14 @@ function accessCookie(cookieName) {
 
 function updateInterface() {
   // Use variable values to determine the correct interface
-  if(!FGGUI.fg_checked) {
-    $('#loginNav').hide();
-    $('#settingsNav').show();
+  if(FGGUI.fg_checked) {
+    //$('#loginNav').hide();
+    //$('#settingsNav').show();
     $('#fgCheckedButton').prop('class', 'btn btn-primary');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-check')
   } else {
-    $('#loginNav').show();
-    $('#settingsNav').hide();
+    //$('#loginNav').show();
+    //$('#settingsNav').hide();
     $('#fgCheckedButton').prop('class', 'btn btn-danger');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-times')
   }
