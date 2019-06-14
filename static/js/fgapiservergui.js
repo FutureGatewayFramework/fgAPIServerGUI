@@ -148,7 +148,20 @@ $(document).ready(function() {
     checkServer(fg_endpoint,
       function(data) {
         FGGUI.fg_checked = true;
-        updateInterface();
+        // Now it is time to check for exising access tokens
+        var fg_accesstoken = accessCookie('fg_accesstoken');
+        checkToken(fg_endpoint,
+                   fg_accesstoken,
+                   function(data) {
+                     FGGUI.fg_logged = true;
+                     FGGUI.fg_accesstoken = fg_accesstoken;
+                     updateInterface();
+                   },
+                   function(data) {
+                     FGGUI.fg_logged = false;
+                     FGGUI.fg_accesstoken = '';
+                     updateInterface();
+                   });
       },
       function(data) {
         FGGUI.fg_checked = false;

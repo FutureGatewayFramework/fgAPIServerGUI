@@ -48,7 +48,7 @@ FGAPIs = {
             this.auth_header = "Bearer " + this.ptv_token; 
             break;
           case 'BASELINE_TOKEN':
-            this.auth_header = this.current_token;
+            this.auth_header = this.access_token;
             break;
           case 'BASELINE_PARAMS':
             this.auth_params = "username=" + this.username + "&" +
@@ -95,6 +95,22 @@ function checkServer(fg_endpoint, successFn, failedFn) {
       },
       function(data) {
         FGAPIs.reset('');
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(null);
+      });
+}
+
+function checkToken(fg_endpoint, fg_token, successFn, failedFn) {
+    FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("auth",
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        successFn(FGAPIs);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
         FGAPIs.setAuth(prev_auth_mode);
         failedFn(null);
       });
