@@ -40,8 +40,8 @@
 
        <li id="settingsNav" class="nav-item dropdown no-arrow mx1">
           <a class="nav-link dropdown-toggle" href="#" id="confDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="badge badge-danger">
-              <i class="fas fa-times"></i>
+            <span id="settingsNavIco" class="badge badge-danger">
+              <i id="settingsNavIcoImg" class="fas fa-times"></i>
             </span>
             <i class="fas fa-cog"></i>
           </a>
@@ -52,8 +52,8 @@
 
         <li id="loginNav" class="nav-item dropdown no-arrow">
           <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="badge badge-danger">
-                <i class="fas fa-times"></i>
+            <span id="loginNavIco" class="badge badge-danger">
+                <i id="loginNavIcoImg" class="fas fa-times"></i>
             </span>
             <i class="fas fa-user-circle fa-fw"></i>
           </a>
@@ -172,7 +172,7 @@
         </div>
         <div class="modal-body">Place FutureGateway API base address and check its connectivity
           <div class="input-group">
-            <input id="fgTestURL" type="text" class="form-control" placeholder="http://localhost/fgapiserver" aria-label="Check" aria-describedby="basic-addon2">
+            <input id="fgTestURL" type="text" class="form-control" placeholder="unknown" aria-label="Check" aria-describedby="basic-addon2">
             <div class="input-group-append">
               <button class="btn btn-primary" type="button" id="checkFGAPIServer">
                 <i class="fas fa-arrow-right"></i>

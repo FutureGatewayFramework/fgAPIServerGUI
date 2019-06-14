@@ -6,24 +6,30 @@
 FGGUI = {
   fg_endpoint: '',
   fg_checked: false,
+  fg_logged: false,
 
-  reset: function() {
-    this.fg_endpoint = 'http://localhost/fgapiserver';
+  reset: function(endpoint) {
+    this.fg_endpoint = endpoint;
     this.fg_checked = false;
+    this.fg_logged = false;
   }
 };
 
 !function(l){
   "use strict";
+  // Settings Check Server Button click event
   l("#checkFGAPIServer").on("click", function() {
     // FG endpoint to check
     var fg_check = $('#fgTestURL').prop('placeholder');
+    //var fg_check = FGGUI.fg_endpoint;
+    console.log("server to test: " + fg_check);
     // Ensure the endpoint finishes with '/'
     fg_check = fg_check.slice(-1)=='/'?fg_check:fg_check + '/';
     // Check the FG endpoint
     checkServer(fg_check,
       function(data) {
         FGGUI.fg_checked = true;
+        // Save last successfull FG endpoint
         createCookie('fg_endpoint', $('#fgTestURL').prop('placeholder'), 365);
         updateInterface();
       },
@@ -33,9 +39,13 @@ FGGUI = {
       }
     );
   }),
-  l("#checkFGAPIServer").on('input propertychange paste', function() {
-    $('#fgCheckedButton').prop('class', 'btn btn-danger');
-    $('#fgCheckedButton').find('i').prop('class', 'fas fa-times');
+  // Settings Check Server change on FG server URL
+  l("#fgTestURL").on('input propertychange paste', function() {
+    var fg_check = this.value;
+    $('#fgTestURL').attr('placeholder', fg_check);
+    FGGUI.reset(fg_check);
+    FGAPIs.reset(fg_check);
+    updateInterface();
   })
 }(jQuery);
 
@@ -56,19 +66,35 @@ function accessCookie(cookieName) {
   return "";
 }
 
+// Use variable values to determine the correct interface
 function updateInterface() {
-  // Use variable values to determine the correct interface
+  // FGAPI Server checked flag
   if(FGGUI.fg_checked) {
     //$('#loginNav').hide();
     //$('#settingsNav').show();
     $('#fgCheckedButton').prop('class', 'btn btn-primary');
-    $('#fgCheckedButton').find('i').prop('class', 'fas fa-check')
+    $('#fgCheckedButton').find('i').prop('class', 'fas fa-check');
+    $('#settingsNavIco').prop('class', 'badge badge-primary');
+    $('#settingsNavIcoImg').prop('class', 'fas fa-check');
+    $('#loginNav').show();
   } else {
     //$('#loginNav').show();
     //$('#settingsNav').hide();
     $('#fgCheckedButton').prop('class', 'btn btn-danger');
-    $('#fgCheckedButton').find('i').prop('class', 'fas fa-times')
+    $('#fgCheckedButton').find('i').prop('class', 'fas fa-times');
+    $('#settingsNavIco').prop('class', 'badge badge-danger');
+    $('#settingsNavIcoImg').prop('class', 'fas fa-times');
+    	
   }
+  // FGAPI Logged user flag
+  if(FGGUI.fg_logged) {
+    $('#loginNavIco').prop('class', 'badge badge-primary');
+    $('#loginNavIcoImg').prop('class', 'fas fa-check');
+  } else {
+    $('#loginNavIco').prop('class', 'badge badge-danger');
+    $('#loginNavIcoImg').prop('class', 'fas fa-times');
+  }
+
   $('#fgTestURL').prop('placeholder', FGGUI.fg_endpoint);
   $('#searchForm').hide();
 }
@@ -81,12 +107,12 @@ $(document).ready(function() {
   var fg_endpoint = accessCookie('fg_endpoint');
   console.log("fg_endpoint: " + fg_endpoint);
   if(fg_endpoint == "") {
-    console.log("1st Time");
-    FGGUI.reset('http://localhost/fgapiserver');
-    FGGUI.checked = false;
+    fg_endpoint = $('#fgTestURL').prop('placeholder');
+    console.log("1st Time, endpoint: " + fg_endpoint);
+    FGGUI.reset(fg_endpoint);
   } else {
-    console.log("! 1st Time");
-    FGGUI.fg_endpoint = fg_endpoint;
+    console.log("! 1st Time, endpoint: " + fg_endpoint);
+    FGGUI.reset(fg_endpoint);
     checkServer(fg_endpoint,
       function(data) {
         FGGUI.fg_checked = true;

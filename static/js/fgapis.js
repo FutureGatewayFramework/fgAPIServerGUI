@@ -23,8 +23,8 @@ FGAPIs = {
     password: "",
     config: "",
 
-    reset: function() {
-      this.fg_endpoint = '';
+    reset: function(endpoint) {
+      this.fg_endpoint = endpoint;
       this.auth_mode = 'NONE';
       this.ptv_token = "";
       this.access_token = "";
@@ -76,7 +76,7 @@ function checkServer(fg_endpoint, successFn, failedFn) {
         successFn(data);
       },
       function(data) {
-        FGAPIs.reset();
+        FGAPIs.reset('');
         failedFn(data);
       });
 }
