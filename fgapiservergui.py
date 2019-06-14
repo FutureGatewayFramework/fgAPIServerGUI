@@ -5,7 +5,7 @@ from flask import Flask
 from flask import render_template
 
 # Create root logger object and configure logger
-logging.config.fileConfig('fgapiserver_gui_log.conf')
+logging.config.fileConfig('logging.conf')
 
 
 app = Flask(__name__)
