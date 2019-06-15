@@ -32,7 +32,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 18:25:39'
+__update__ = '2019-06-15 19:12:02'
 
 
 # Logging
@@ -48,18 +48,46 @@ class fgQueries:
     activation_flag = True
 
     def __init__(self):
-        query_info = {'sql_safe': False,
-                      'sql': 'select version();',
-                      'sql_data': (),
-                      'sql_fields': (),
-                      'sql_result': {},
-                      'err_flag': False,
-                      'err_msg': '', }
         if(fgapisrv_db.test() is not True):
             self.activation_flag = False
 
     def is_enabled(self):
         return self.activation_flag
+
+    def init_query(self, **kwargs):
+        """
+            Initialize query
+
+            Initialize a query using a configurable set of input parameters
+
+            :param sql_safe: True for BEGIN/END transaction in the middle of
+                             the given query execution
+            :param sql: The SQL query to execute. It may contain %s arguments
+                        to execute parametric queries. In this case the option
+                        'sql_data' is mandatory
+            :param sql_data: A tuple containing values of the given parametric
+                             query
+            :param sql_fields: A tuple conatining the query (SELECT) column
+                               names. In this case each record will be a
+                               dictionary in the form of:
+                                 {'column_name': 'column_value', ...}
+            :return query_info: query information dictionary
+        """
+        query_info = {
+            'sql_safe': False,
+            'sql': '',
+            'sql_data': (),
+            'sql_fields': (),
+            'sql_result': {},
+            'err_flag': False,
+            'err_msg': '',
+        }
+        # Process the argument list overriding default empty values
+        for key, value in kwargs.items():
+            if key not in query_info:
+                loggin.warning('Unespected parameter: \'%s\'' % key)
+            query_info[key] = value
+        return query_info
 
     def do_query(self, query_info):
         """

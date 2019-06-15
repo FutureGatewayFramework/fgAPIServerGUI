@@ -28,7 +28,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 18:25:39'
+__update__ = '2019-06-15 19:12:02'
 
 # FGTESTS_STOPATFAIL environment controls the execution
 # of the tests, if defined, it stops test execution as
@@ -72,30 +72,15 @@ class TestfgAPIServerGUI_Queries(unittest.TestCase):
     def test_simple_query(self):
         sql = 'SELECT VERSION()'
         self.banner("Testing simple query: '%s'" % sql)
-        query_info = {'sql_safe': False,
-                      'sql': sql,
-                      'sql_data': (),
-                      'sql_fields': (),
-                      'sql_result': {},
-                      'err_flag': False,
-                      'err_msg': '', }
+        query_info = fg_queries.init_query(sql=sql)
         query_info = fg_queries.do_query(query_info)
         self.assertEqual(query_info['err_flag'], False)
 
     def test_query_with_fields(self):
         sql = ('select uuid, creation, last_access, enabled, cfg_hash'
                ' from srv_registry;')
-        self.banner("Testing query with fields: '%s'" % sql)
-        query_info = {'sql_safe': False,
-                      'sql': sql,
-                      'sql_data': (),
-                      'sql_fields': ('uuid',
-                                     'creation',
-                                     'last_access',
-                                     'enabled'),
-                      'sql_result': {},
-                      'err_flag': False,
-                      'err_msg': '', }
+        fields = ('uuid', 'creation', 'last_access', 'enabled')
+        query_info = fg_queries.init_query(sql=sql, sql_fields=fields)
         query_info = fg_queries.do_query(query_info)
         self.assertEqual(query_info['err_flag'], False)
 

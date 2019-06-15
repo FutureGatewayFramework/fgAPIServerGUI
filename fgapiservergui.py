@@ -41,7 +41,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 18:25:39'
+__update__ = '2019-06-15 19:12:02'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -81,7 +81,8 @@ app_state = {
     'user': fg_config['fgapiserver_user'],
     'password': fg_config['fgapiserver_password'],
     'apiserver': fg_config['apiserver'],
-    'page': None
+    'page': None,
+    'dbver': ''
 }
 
 # Create Flask app
@@ -92,6 +93,16 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     logging.debug('page: /')
+    sql = 'SELECT VERSION()'
+    query_info = {'sql_safe': False,
+                  'sql': sql,
+                  'sql_data': (),
+                  'sql_fields': (),
+                  'sql_result': {},
+                  'err_flag': False,
+                  'err_msg': '', }
+    query_info = fg_queries.do_query(query_info)
+    app_state['dbver'] = query_info['sql_result'][0][0]
     app_state['page'] = 'Dashboard'
     return render_template('index.html', app_state=app_state)
 
