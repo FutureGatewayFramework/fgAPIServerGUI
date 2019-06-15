@@ -28,7 +28,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 20:42:49'
+__update__ = '2019-06-15 22:58:39'
 
 # FGTESTS_STOPATFAIL environment controls the execution
 # of the tests, if defined, it stops test execution as
@@ -83,6 +83,19 @@ class TestfgAPIServerGUI_Queries(unittest.TestCase):
         query_info = fg_queries.init_query(sql=sql, sql_fields=fields)
         query_info = fg_queries.do_query(query_info)
         self.assertEqual(query_info['err_flag'], False)
+
+    def test_query_with_fields_and_data(self):
+        sql = ('select id, name, first_name, last_name, institute, mail '
+               'from fg_user where name=\'%s\';')
+        data = ('futuregateway', )
+        fields = ('id', 'name', 'first_name',
+                  'last_name', 'institute', 'mail')
+        query_info = fg_queries.init_query(sql=sql,
+                                           sql_fields=fields,
+                                           sql_data=data)
+        query_info = fg_queries.do_query(query_info)
+        self.assertEqual(query_info['err_flag'], False)
+        print(query_info['sql_result'])
 
 
 if __name__ == '__main__':

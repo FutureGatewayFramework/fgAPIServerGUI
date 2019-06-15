@@ -29,21 +29,23 @@ __status__ = 'devel'
 __update__ = '2019-05-03 17:04:36'
 
 
-fgapiservergui_queries = [
+fgapiservergui_queries_queries = [
     {'id': 0,
-     'query': 'SELECT VERSION()',
-     'result': [['test', ], ]},
+     'query': 'SELECT VERSION();',
+     'result': [['test_version', ], ]},
     {'id': 1,
-     'query': 'select version from db_patches order by id desc limit 1;',
-     'result': [['0.0.13'], ]},
+     'query': ('select uuid, creation, last_access, enabled, cfg_hash '
+               'from srv_registry;'),
+     'result': [['test_uuid1', '1/1/1970', '1/1/1970', 'true', 'test_hash1'],
+                ['test_uuid2', '1/1/1970', '1/1/1970', 'true', 'test_hash2'], ]},
     {'id': 2,
-     'query': 'select count(*)>0 from srv_registry\n'
-              'where uuid=%s\n'
-              '  and enabled=%s;',
-     'result': [[1], ]},
+      'query': ('select id, name, first_name, last_name, institute, mail '
+                'from fg_user where name=\'%s\';'),
+      'result': [[1, 'futuregateway', 'futuregateway', 'futuregateway',
+                 'infn', 'futuregateway@futuregateway'], ]},
 ]
 
 # fgapiserver tests queries
 queries = [
-    {'category': 'fgapiservergui',
-     'statements': fgapiservergui_queries}]
+    {'category': 'fgapiservergui_queries',
+     'statements': fgapiservergui_queries_queries}]

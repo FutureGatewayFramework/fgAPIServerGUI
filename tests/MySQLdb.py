@@ -17,6 +17,7 @@
 # limitations under the License.
 
 import queries.fgapiservergui as fgapiservergui_queries
+import queries.fgapiservergui_queries as fgapiservergui_queries_queries
 
 #
 # MySQLdb.py emulates the MySQL module returning configurable outputs
@@ -30,7 +31,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 20:42:49'
+__update__ = '2019-06-15 22:58:39'
 
 
 queries = [
@@ -40,7 +41,8 @@ queries = [
           'result': None}, ]}, ]
 
 # Load tests queries
-queries += fgapiservergui_queries.queries
+queries += (fgapiservergui_queries.queries +
+            fgapiservergui_queries_queries.queries)
 
 
 class cursor:
