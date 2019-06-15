@@ -1,0 +1,40 @@
+#
+# FutureGateway APIServerDaemon configuration file
+#
+# Author: riccardo.bruno@ct.infn.it
+#
+# Configuraion file is splitted in two sections:
+# 'fgapiservergui' - Contains values related to the server activity
+# 'fgapiserver_db'    - Contains values related to DB connection
+#
+# Below the meaning of values belonging to the section: 'fgapiservergui'
+#
+# debug                - Debug operation mode True/False
+# fgjson_indent        - Indentation level for all readable JSON outputs
+# logging_conf         - fgAPIServerGUI logging configurartion file
+#
+# Below the meaning of values belonging to the section: 'fgapiserver_db'
+#
+# fgapisrv_db_host - FutureGateway database hostname/ip
+# fgapisrv_db_port - FutureGateway database port number
+# fgapisrv_db_user - FutureGateway database user name
+# fgapisrv_db_pass - FutureGateway database user password
+# fgapisrv_db_name - FutureGateway database name
+# dbver            - Needed database schema version
+#
+
+# fgapiserverdaemon settings
+fgapiservergui:
+  debug: True
+  json_indent: 4
+  logging_conf: logging.conf
+
+# futuregateway database settings
+fgapiserver_db:
+  dbver: 0.0.13
+  fgapisrv_db_host: 127.0.0.1
+  fgapisrv_db_port: 3306
+  fgapisrv_db_user: fgapiserver
+  fgapisrv_db_pass: fgapiserver_password
+  fgapisrv_db_name: fgapiserver
+
