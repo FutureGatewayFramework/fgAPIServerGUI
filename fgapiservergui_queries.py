@@ -125,6 +125,7 @@ class fgQueries:
             query_info['sql_result'] = sql_results
             query_info['err_flag'] = False
             query_info['err_msg'] = ''
+            logging.debug("Query success: %s " % sql_results)
         except MySQLdb.Error as e:
             fgapisrv_db.catch_db_error(e, db, safe_transaction)
             query_info['err_flag'] = fgapisrv_db.err_flag

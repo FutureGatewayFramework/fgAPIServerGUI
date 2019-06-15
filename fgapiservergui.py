@@ -82,7 +82,9 @@ app_state = {
     'password': fg_config['fgapiserver_password'],
     'apiserver': fg_config['apiserver'],
     'page': None,
-    'dbver': ''
+    'dbver': '',
+    'err_flag': False,
+    'err_msg': False
 }
 
 # Create Flask app
@@ -93,16 +95,14 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     logging.debug('page: /')
-    sql = 'SELECT VERSION()'
-    query_info = {'sql_safe': False,
-                  'sql': sql,
-                  'sql_data': (),
-                  'sql_fields': (),
-                  'sql_result': {},
-                  'err_flag': False,
-                  'err_msg': '', }
+    query_info = fg_queries.init_query(sql='SELECT VERSION()')
     query_info = fg_queries.do_query(query_info)
-    app_state['dbver'] = query_info['sql_result'][0][0]
+    if query_info['err_flag'] is not True:
+        app_state['err_flag'] = False
+        app_state['dbver'] = query_info['sql_result'][0][0]
+    else:
+        app_state['err_flag'] = True
+        app_state['err_msg'] = query_info['err_msg']
     app_state['page'] = 'Dashboard'
     return render_template('index.html', app_state=app_state)
 

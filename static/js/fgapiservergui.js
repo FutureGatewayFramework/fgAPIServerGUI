@@ -130,6 +130,21 @@ function updateInterface() {
 
   $('#fgTestURL').prop('placeholder', FGGUI.fg_endpoint);
   $('#searchForm').hide();
+
+  // Page specific composition
+  page = $('#breadcumbBar').find('li').last().prev().find('a').text();
+  switch(page) {
+    case 'Dashboard':
+       updateDashboard();
+    break;
+    default:
+      console.log("Unhandled page: " + page);
+  }
+}
+
+// Updatgin Dashboard elements
+function updateDashboard() {
+  console.log("Handling dashboard page");
 }
 
 // FGAPIServerGUI initialization
