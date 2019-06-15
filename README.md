@@ -34,7 +34,7 @@ pip install -r requirements.txt
 python futuregatewaygui.py
 ```
 
-To execute the server in a production environment, the application needs to be executed via a wgsi engine such as: [apache+mod_wsgi][mod_wsgi] for apache, [Nginx+uWSGI][Nginx+uWSGI] (used by FG Setup), [gunicorn][Gunicorn] and many others.
+To execute the server in a production environment, the application needs to be executed via a wgsi engine such as: [apache+mod_wsgi][apache+mod_wsgi] for apache, [Nginx+uWSGI][Nginx+uWSGI] (used by FG Setup), [gunicorn][Gunicorn] and many others.
 
 
 [gunicorn]: <https://mattgathu.github.io/multiprocessing-logging-in-python/>
