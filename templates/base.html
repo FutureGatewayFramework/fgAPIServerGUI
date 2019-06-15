@@ -12,6 +12,22 @@
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
+    {% if app_state is defined and app_state %}
+    <script>
+    var APPSTATE = {
+      name: '{{ app_state.name }}',
+      logged: '{{ app_state.logged }}'.toLowerCase() == true,
+      configured: '{{ app_state.configured }}'.toLowerCase() == true,
+      user: '{{ app_state.user }}',
+      password: '******',
+      apiserver: '{{ app_state.apiserver }}',
+      page: '{{ app_state.page }}',
+      dbver: '{{ app_state.dbver }}',
+      err_flag: '{{ app_state.err_flag }}'.toLowerCase() == true,
+      err_msg: '{{ app_state.err_msg }}',
+    };
+    </script>
+    {% endif %}
   </head>
   <!--
     Body section
@@ -167,7 +183,7 @@
               <label for="fgUsername">User name</label><br/>
               <div>
                 <div class="input-group-append">
-                  <input id="fgUsername" type="text" class="form-control" value="{{ app_state.fgapiserver_user }}" aria-label="Username" aria-describedby="basic-addon2">
+                  <input id="fgUsername" type="text" class="form-control" value="{{ app_state.user }}" aria-label="Username" aria-describedby="basic-addon2">
                 </div>
               </div>
             </div>
@@ -176,7 +192,7 @@
               <label for="fgPassword">Password</label><br/>
               <div>
                 <div class="input-group-append">
-                  <input id="fgPassword" type="password" class="form-control" value="{{ app_state.fgapiserver_user }}" aria-label="Password" aria-describedby="basic-addon2">
+                  <input id="fgPassword" type="password" class="form-control" value="{{ app_state.password }}" aria-label="Password" aria-describedby="basic-addon2">
                   <button class="btn btn-primary" type="button" id="togglePasswordView">
                     <i class="fas fa-eye"></i>
                   </button>
@@ -215,7 +231,7 @@
               <label for="fgTestURL">API Server</label><br/>
               <div>
                 <div class="input-group-append">
-                  <input id="fgTestURL" type="text" class="form-control" placeholder="unknown" aria-label="Check" aria-describedby="basic-addon2">
+                  <input id="fgTestURL" type="text" class="form-control" placeholder="unknown" value={{ app_state.apiserver }} aria-label="Check" aria-describedby="basic-addon2">
                   <button class="btn btn-primary" type="button" id="checkFGAPIServer">
                     <i class="fas fa-arrow-right"></i>
                   </button>
