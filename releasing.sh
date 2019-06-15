@@ -44,12 +44,14 @@ EOF
 
 # Call checkstyle
 check_style() {
+  echo "Checkstyle ..."
   pycodestyle --ignore=E402 *.py &&\
   pycodestyle tests/*.py
 }
 
 # Unittests
 unit_tests() {
+  echo "Unit tests ..."
   TEST_SUITE=(
     fgapiservergui
     fgapiservergui_queries
@@ -58,6 +60,7 @@ unit_tests() {
   export PYTHONPATH=$PYTHONPATH:..:.
   export FGTESTS_STOPATFAIL=1
   for test in ${TEST_SUITE[@]}; do
+    echo "testing: $test"
     python -m unittest --failfast test_${test}
     [ $? -ne 0 ] && return 1 
   done
