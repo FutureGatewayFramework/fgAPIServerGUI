@@ -4,8 +4,16 @@
   {{ super() }}
 {% endblock %}
 {% block content %}
-<div class="">Database version: {{ app_state.dbver }}</div>
-<!--
-{% block page %}{% endblock %}
--->
+<div class=""></div>
+<div class="card">
+  <div class="card-header">
+    Overview
+  </div>
+  <div class="card-body">
+   <p class="card-text">Generic FutureGateway APIServer information.</p>
+   <table class="table"">
+     <tr><td>MySQL version:</td><td>{{ app_state.dbver }}</td></tr>
+   </table>
+  </div>
+</div>
 {% endblock %}
