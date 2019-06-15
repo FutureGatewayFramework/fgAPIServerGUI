@@ -17,9 +17,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import logging
 import logging.config
 from futuregatewayapis import FutureGatewayAPIs
+from fgapiservergui_db import fgapisrv_db
 from fgapiservergui_config import fg_config
 from fgapiservergui_tools import\
     check_db_ver,\
@@ -37,7 +39,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 00:25:22'
+__update__ = '2019-06-15 13:29:22'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -49,6 +51,7 @@ logging.config.fileConfig(fg_config['logging_conf'])
 # Get database object and check the DB
 check_db_ver()
 
+
 # Server registration and configuration from fgdb
 check_db_reg(fg_config)
 
@@ -57,6 +60,7 @@ check_db_reg(fg_config)
 logging.config.fileConfig('logging.conf')
 
 
+# Create Flask app
 app = Flask(__name__)
 fgAPIs = FutureGatewayAPIs(
     'http://localhost/fgapiserver',
@@ -70,7 +74,7 @@ webapp = {
     'logged': False,
     'configured': False,
     'user': None,
-    'apiserver': 'http://localhost/fgapiserver',
+    'apiserver': fg_config['apiserver'],
     'page': None
 }
 
@@ -85,3 +89,4 @@ def index():
 if __name__ == '__main__':
     logging.debug('Starting app in stand-alone mode (debug)')
     app.run(debug=True)
+    sys.exit(0)

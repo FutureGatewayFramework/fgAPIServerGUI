@@ -28,6 +28,7 @@ fgapiservergui:
   debug: True
   json_indent: 4
   logging_conf: logging.conf
+  apiserver: 'http://localhost/fgapiserver'
 
 # futuregateway database settings
 fgapiserver_db:

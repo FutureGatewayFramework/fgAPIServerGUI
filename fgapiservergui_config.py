@@ -28,6 +28,8 @@ __license__ = 'Apache'
 __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
+__status__ = 'devel'
+__update__ = '2019-06-15 13:29:22'
 
 # Logging object
 logger = logging.getLogger(__name__)
@@ -57,6 +59,7 @@ class FGApiServerConfig(dict):
             'debug': 'True',
             'json_indent': '4',
             'logging_conf': 'logging.conf',
+            'apiserver': 'http://localhost/fgapiserver',
         },
         'fgapiserver_db': {
             'fgapisrv_db_host': '127.0.0.1',
