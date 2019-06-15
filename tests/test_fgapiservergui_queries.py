@@ -17,11 +17,9 @@
 # limitations under the License.
 
 import unittest
-import fgapiservergui
+from fgapiservergui_queries import fg_queries
 import hashlib
 import os
-from fgapiservergui_config import fg_config
-from fgapiservergui_db import fgapisrv_db
 
 __author__ = 'Riccardo Bruno'
 __copyright__ = '2019'
@@ -38,7 +36,7 @@ __update__ = '2019-06-15 16:06:25'
 stop_at_fail = os.getenv('FGTESTS_STOPATFAIL') is not None
 
 
-class TestfgAPIServerGUI(unittest.TestCase):
+class TestfgAPIServerGUI_Queries(unittest.TestCase):
 
     @staticmethod
     def banner(test_name):
@@ -60,24 +58,29 @@ class TestfgAPIServerGUI(unittest.TestCase):
         return hashlib.md5(string).hexdigest()
 
     #
-    # fgapiserver
+    # Queries
     #
 
-    def test_checkDbVer(self):
-        self.banner("checkDbVer()")
-        self.assertEqual('0.0.13', fgapiservergui.check_db_ver())
+    def test_not_null(self):
+        self.banner("Testing query object is not null")
+        assert fg_queries is not None
 
-    def test_dbobject(self):
-        self.banner("Testing fgapiserverdb get DB object")
-        assert fgapisrv_db is not None
+    def test_activation(self):
+        self.banner("Activated flag")
+        self.assertEqual(True, fg_queries.is_enabled())
 
-    def test_dbobj_test(self):
-        self.banner("Testing fgapiserverdb test")
-        result = fgapisrv_db.test()
-        state = fgapisrv_db.get_state()
-        print("Result: '%s'" % result)
-        print("DB state: '%s'" % (state,))
-        assert state[0] is False
+    def test_simple_query(self):
+        sql = 'SELECT VERSION();'
+        self.banner("Testing simple query '%s'" % sql)
+        query_info = {'sql_safe': False,
+                      'sql': sql,
+                      'sql_data': (),
+                      'sql_fields': (),
+                      'sql_result': {},
+                      'err_flag': False,
+                      'err_msg': '', }
+        query_info = fg_queries.do_query(query_info)
+        self.assertEqual(query_info['err_flag'], False)
 
 
 if __name__ == '__main__':

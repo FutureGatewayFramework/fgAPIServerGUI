@@ -27,6 +27,8 @@ from fgapiservergui_config import fg_config
 from fgapiservergui_db import\
     get_db,\
     fgapisrv_db
+from fgapiservergui_queries import\
+    fg_queries
 
 
 """
@@ -40,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 13:29:22'
+__update__ = '2019-06-15 16:06:25'
 
 # Logging
 logger = logging.getLogger(__name__)
@@ -79,7 +81,6 @@ def check_db_ver():
                    "new available patches."
                    % (db_ver, conf_db_ver))
             logging.error(msg)
-            print(msg)
             sys.exit(1)
     logging.debug("Check database version passed")
     return db_ver
@@ -107,9 +108,9 @@ def check_db_reg(config):
 
     :return: This fucntion checks if this running server has been registered
              into the database. If the registration is not yet done, the
-             registration will be performed and the current configuration
+             registration will be performeded and the current configuration
              registered. If the server has been registered return the
-             configuration saved from the registration.
+             configuration saved froms the previous registration.
     """
 
     # Retrieve the service UUID
@@ -126,7 +127,6 @@ def check_db_reg(config):
             msg = ("Unable to register service under uuid: '%s'"
                    % fgapisrv_uuid)
             logging.error(msg)
-            print(msg)
             sys.exit(1)
     else:
         # Registered service checks for database configuration
@@ -153,3 +153,17 @@ def update_db_config(config):
                           % (key, config[key], db_config[key]))
             config[key] = db_config[key]
     return config
+
+
+def check_db_queries():
+    """
+        Running server registration check on database queries object
+
+        :return: This function does not return any value, it just cjecks that
+                 fgQueries object is activated
+    """
+
+    if(fg_queries is None or fg_queries.is_enabled() is not True):
+        msg = "Database queries class is not acrivated"
+        logging.error(msg)
+        sys.exit(1)

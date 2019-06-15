@@ -52,6 +52,7 @@ check_style() {
 unit_tests() {
   TEST_SUITE=(
     fgapiservergui
+    fgapiservergui_queries
   )
   cd tests
   export PYTHONPATH=$PYTHONPATH:..:.

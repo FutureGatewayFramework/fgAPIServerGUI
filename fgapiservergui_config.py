@@ -29,7 +29,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 13:29:22'
+__update__ = '2019-06-15 16:06:25'
 
 # Logging object
 logger = logging.getLogger(__name__)
@@ -56,10 +56,14 @@ class FGApiServerConfig(dict):
     # class variable fgConfigMsg
     defaults = {
         'fgapiservergui': {
+            'service_name': 'FutureGateway API Server GUI',
             'debug': 'True',
             'json_indent': '4',
             'logging_conf': 'logging.conf',
             'apiserver': 'http://localhost/fgapiserver',
+            'fgapiver': 'V1.0',
+            'fgapiserver_user': 'futuregateway',
+            'fgapiserver_password': 'futuregateway',
         },
         'fgapiserver_db': {
             'fgapisrv_db_host': '127.0.0.1',
@@ -67,7 +71,7 @@ class FGApiServerConfig(dict):
             'fgapisrv_db_user': 'fgapiserver',
             'fgapisrv_db_pass': 'fgapiserver_password',
             'fgapisrv_db_name': 'fgapiserver',
-            'dbver': '0.0.13'
+            'dbver': '0.0.13',
         },
     }
 

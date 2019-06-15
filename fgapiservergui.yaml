@@ -25,10 +25,14 @@
 
 # fgapiserverdaemon settings
 fgapiservergui:
+  service_name: FutureGateway API Server GUI
   debug: True
   json_indent: 4
   logging_conf: logging.conf
-  apiserver: 'http://localhost/fgapiserver'
+  apiserver: http://localhost/fgapiserver
+  fgapiver: V1.0
+  fgapiserver_user: 'futuregateway'
+  fgapiserver_password: 'futuregateway'
 
 # futuregateway database settings
 fgapiserver_db:

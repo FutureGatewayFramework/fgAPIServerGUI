@@ -19,7 +19,7 @@
   <body id="page-top">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-      <a class="navbar-brand mr-1" href="/">{{ webapp.name }}</a>
+      <a class="navbar-brand mr-1" href="/">{{ app_state.name }}</a>
       <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
       </button>
@@ -125,7 +125,7 @@
       <footer class="sticky-footer">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright © {{ webapp.name}} 2019</span>
+            <span>Copyright © {{ app_state.name}} 2019</span>
           </div>
         </div>
       </footer>
@@ -159,7 +159,7 @@
               <label for="fgUsername">User name</label><br/>
               <div>
                 <div class="input-group-append">
-                  <input id="fgUsername" type="text" class="form-control" value="futuregateway" aria-label="Username" aria-describedby="basic-addon2">
+                  <input id="fgUsername" type="text" class="form-control" value="{{ app_state.fgapiserver_user }}" aria-label="Username" aria-describedby="basic-addon2">
                 </div>
               </div>
             </div>
@@ -168,7 +168,7 @@
               <label for="fgPassword">Password</label><br/>
               <div>
                 <div class="input-group-append">
-                  <input id="fgPassword" type="password" class="form-control" value="futuregateway" aria-label="Password" aria-describedby="basic-addon2">
+                  <input id="fgPassword" type="password" class="form-control" value="{{ app_state.fgapiserver_user }}" aria-label="Password" aria-describedby="basic-addon2">
                   <button class="btn btn-primary" type="button" id="togglePasswordView">
                     <i class="fas fa-eye"></i>
                   </button>

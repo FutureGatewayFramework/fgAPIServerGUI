@@ -25,7 +25,9 @@ from fgapiservergui_db import fgapisrv_db
 from fgapiservergui_config import fg_config
 from fgapiservergui_tools import\
     check_db_ver,\
-    check_db_reg
+    check_db_reg,\
+    check_db_queries
+from fgapiservergui_queries import fg_queries
 from flask import Flask
 from flask import render_template
 
@@ -39,7 +41,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 13:29:22'
+__update__ = '2019-06-15 16:06:25'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -56,37 +58,47 @@ check_db_ver()
 check_db_reg(fg_config)
 
 
+# Database queries object ckeck
+check_db_queries()
+
 # Create root logger object and configure logger
 logging.config.fileConfig('logging.conf')
 
 
-# Create Flask app
-app = Flask(__name__)
+# Futuregateway python APIs object
 fgAPIs = FutureGatewayAPIs(
-    'http://localhost/fgapiserver',
-    'v1.0',
-    'futuregateway',
-    'futuregateway')
+    fg_config['apiserver'],
+    fg_config['fgapiver'],
+    fg_config['fgapiserver_user'],
+    fg_config['fgapiserver_password'])
 
-webapp = {
+# Generate application state object
+app_state = {
     'fgapis': fgAPIs,
-    'name': 'fgAPIServerGUI',
+    'name': fg_config['service_name'],
     'logged': False,
     'configured': False,
-    'user': None,
+    'user': fg_config['fgapiserver_user'],
+    'password': fg_config['fgapiserver_password'],
     'apiserver': fg_config['apiserver'],
     'page': None
 }
 
+# Create Flask app
+app = Flask(__name__)
 
+
+# Main page showing the dashboard
 @app.route('/')
 def index():
-    logging.debug('Called index')
-    webapp['page'] = 'Dashboard'
-    return render_template('index.html', webapp=webapp)
+    logging.debug('page: /')
+    app_state['page'] = 'Dashboard'
+    return render_template('index.html', app_state=app_state)
 
 
+# Executing in standalone mode (debug)
 if __name__ == '__main__':
-    logging.debug('Starting app in stand-alone mode (debug)')
+    logging.debug('Starting %s in stand-alone mode (debug)'
+                  % fg_config['service_name'])
     app.run(debug=True)
     sys.exit(0)
