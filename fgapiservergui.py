@@ -83,6 +83,7 @@ app_state = {
     'password': fg_config['fgapiserver_password'],
     'apiserver': fg_config['apiserver'],
     'page': None,
+    'pageaddr': '',
     'mysqlver': '',
     'dbver': fg_config['dbver'],
     'dbdate': '',
@@ -124,6 +125,7 @@ def index():
         app_state['err_msg'] = query_info['err_msg']
     # Set page name
     app_state['page'] = 'Home'
+    app_state['pageaddr'] = '/'
     return render_template('index.html', app_state=app_state)
 
 # Infrastructures
@@ -131,6 +133,7 @@ def index():
 def infrastructures():
     logging.debug('page: infrastructures')
     app_state['page'] = 'Infrastructures'
+    app_state['pageaddr'] = '/infrastructures'
     return render_template('infrastructures.html', app_state=app_state)
 
 # Applications
@@ -138,6 +141,7 @@ def infrastructures():
 def applications():
     logging.debug('page: applications')
     app_state['page'] = 'Applications'
+    app_state['pageaddr'] = '/applications'
     return render_template('applications.html', app_state=app_state)
 
 # Tasks
@@ -145,6 +149,7 @@ def applications():
 def tasks():
     logging.debug('page: tasks')
     app_state['page'] = 'Tasks'
+    app_state['pageaddr'] = '/tasks'
     return render_template('tasks.html', app_state=app_state)
 
 # Users
@@ -152,6 +157,7 @@ def tasks():
 def users():
     logging.debug('page: users')
     app_state['page'] = 'Users'
+    app_state['pageaddr'] = '/users'
     return render_template('users.html', app_state=app_state)
 
 # Groups
@@ -159,6 +165,7 @@ def users():
 def groups():
     logging.debug('page: groups')
     app_state['page'] = 'Groups'
+    app_state['pageaddr'] = '/groups'
     return render_template('groups.html', app_state=app_state)
 
 # Roles
@@ -166,6 +173,7 @@ def groups():
 def roles():
     logging.debug('page: roles')
     app_state['page'] = 'Roles'
+    app_state['pageaddr'] = '/roles'
     return render_template('roles.html', app_state=app_state)
 
 

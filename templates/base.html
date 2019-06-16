@@ -22,6 +22,7 @@
       password: '******',
       apiserver: '{{ app_state.apiserver }}',
       page: '{{ app_state.page }}',
+      pageaddr: '{{ app_state.pageaddr }}',
       mysqlver: '{{ app_state.mysqlver }}',
       dbver: '{{ app_state.dbver }}',
       dbdate: '{{ app_state.dbdate }}',
@@ -185,7 +186,7 @@
         <!-- Breadcrumbs-->
         <ol class="breadcrumb" id="breadcumbBar">
           <li class="breadcrumb-item">
-            <a href="/">{{ app_state.page }}</a>
+            <a href="{{ app_state.pageaddr }}">{{ app_state.page }}</a>
           </li>
           <li class="breadcrumb-item active">{% block page %}{% endblock %}</li>
         </ol>

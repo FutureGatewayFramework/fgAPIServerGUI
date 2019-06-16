@@ -4,7 +4,10 @@
   {{ super() }}
 {% endblock %}
 {% block content %}
-<div class=""></div>
+<div class="alert alert-danger" role="alert" id="alertContent">
+  Page content is not available until you <a href="#loginModal" data-toggle="modal" data-target="#loginModal">Login</a>
+</div>
+<div class="" id="pageContent">
 
 <!-- fgAPIServerGUI info -->
 <div class="card" id="cardGenerid">
@@ -41,5 +44,7 @@
   <div class="card-footer text-muted">
   </div>
   -->
+</div>
+
 </div>
 {% endblock %}

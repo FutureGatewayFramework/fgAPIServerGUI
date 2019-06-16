@@ -160,40 +160,58 @@ function updateInterface() {
   }
 }
 
+// Toggle between Alert and Page content
+function setupPageContent() {
+  if(FGGUI.fg_logged) {
+      $('#pageContent').show()
+      $('#alertContent').hide()
+  } else {
+      $('#pageContent').hide()
+      $('#alertContent').show()
+  }
+}
+
 // Updatgin Home elements
 function updateHome() {
   console.log("Handling home page");
   $('#tbl_apiserver').text(FGGUI.fg_endpoint);
+  setupPageContent();
 }
 
 // Updatgin Home elements
 function updateInfrastructures() {
   console.log("Handling Infrastructures page");
+  setupPageContent();
 }
 
 // Updatgin Applications elements
 function updateApplications() {
   console.log("Handling Applications page");
+  setupPageContent();
 }
 
 // Updatgin Tasks elements
 function updateTasks() {
   console.log("Handling Tasks page");
+  setupPageContent();
 }
 
 // Updatgin Users elements
 function updateUsers() {
   console.log("Handling Users page");
+  setupPageContent();
 }
 
 // Updatgin Groups elements
 function updateGroups() {
   console.log("Handling Groups page");
+  setupPageContent();
 }
 
 // Updatgin Roles elements
 function updateRoles() {
   console.log("Handling Roles page");
+  setupPageContent();
 }
 
 // FGAPIServerGUI initialization
