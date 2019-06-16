@@ -32,7 +32,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-15 22:58:39'
+__update__ = '2019-06-16 09:23:51'
 
 
 # Logging
@@ -130,9 +130,16 @@ class fgQueries:
             fgapisrv_db.catch_db_error(e, db, safe_transaction)
             query_info['err_flag'] = fgapisrv_db.err_flag
             query_info['err_msg'] = fgapisrv_db.err_msg
+            raise fgQueriesError(fgapisrv_db.err_msg, query_info)
         finally:
             fgapisrv_db.close_db(db, cursor, safe_transaction)
         return query_info
+
+
+class fgQueriesError(Exception):
+    def __init__(self, message, query_info):
+        # Call the base class constructor with the parameters it needs
+        super(fgQueriesError, self).__init__(message)
 
 
 # FutureGateway database queries object
