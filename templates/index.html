@@ -5,14 +5,30 @@
 {% endblock %}
 {% block content %}
 <div class=""></div>
+
+<!-- fgAPIServerGUI info -->
 <div class="card" id="cardGenerid">
   <div class="card-header">
-    Overview
+    Generic FutureGateway APIServerGUI information
   </div>
   <div class="card-body">
-   <p class="card-text">Generic FutureGateway APIServer information.</p>
    <table class="table">
-     <tr><td>MySQL version:</td><td>{{ app_state.dbver }}</td></tr>
+    <tr><td>Node</td><td>{{ app_state.gui_node }}</td></tr>
+     <tr><td>Platform</td><td>{{ app_state.gui_platform }}</td></tr>
+     <tr><td>Python version</td><td>{{ app_state.python_ver }}</td></tr>
+     <tr><td>MySQL version</td><td>{{ app_state.dbver }}</td></tr>
+   </table>
+  </div>
+</div>
+<br/>
+<!-- fgAPIServer info -->
+<div class="card" id="cardGenerid">
+  <div class="card-header">
+    Generic FutureGateway APIServer information
+  </div>
+  <div class="card-body">
+   <table class="table">
+     <tr><td>Endpoint</td><td id="tbl_apiserver">{{ app_state.apiserver }}</td></tr>
    </table>
   </div>
 </div>

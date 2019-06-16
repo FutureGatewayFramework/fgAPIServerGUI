@@ -20,6 +20,7 @@
 import sys
 import logging
 import logging.config
+import platform
 from futuregatewayapis import FutureGatewayAPIs
 from fgapiservergui_db import fgapisrv_db
 from fgapiservergui_config import fg_config
@@ -41,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-16 09:23:51'
+__update__ = '2019-06-16 10:02:43'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -85,8 +86,12 @@ app_state = {
     'dbver': '',
     'err_flag': False,
     'err_msg': False,
-    'remote_addr': ''
+    'remote_addr': '',
+    'gui_node': platform.node(),
+    'gui_platform': platform.platform(),
+    'python_ver': platform.python_version(),
 }
+
 
 # Create Flask app
 app = Flask(__name__)
@@ -109,7 +114,7 @@ def index():
         app_state['err_flag'] = True
         app_state['err_msg'] = query_info['err_msg']
     # Set page name
-    app_state['page'] = 'Dashboard'
+    app_state['page'] = 'Home'
     return render_template('index.html', app_state=app_state)
 
 

@@ -134,8 +134,8 @@ function updateInterface() {
   // Page specific composition
   page = $('#breadcumbBar').find('li').last().prev().find('a').text();
   switch(page) {
-    case 'Dashboard':
-       updateDashboard();
+    case 'Home':
+       updateHome();
     break;
     default:
       console.log("Unhandled page: " + page);
@@ -143,8 +143,9 @@ function updateInterface() {
 }
 
 // Updatgin Dashboard elements
-function updateDashboard() {
-  console.log("Handling dashboard page");
+function updateHome() {
+  console.log("Handling home page");
+  $('#tbl_apiserver').text(FGGUI.fg_endpoint);
 }
 
 // FGAPIServerGUI initialization

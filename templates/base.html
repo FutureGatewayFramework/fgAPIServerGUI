@@ -26,6 +26,9 @@
       err_flag: '{{ app_state.err_flag }}'.toLowerCase() == true,
       err_msg: '{{ app_state.err_msg }}',
       remote_addr: '{{ app_state.remote_addr }}',
+      gui_node: '{{ app_state.gui_node }}',
+      gui_platform: '{{ app_state.gui_platform }}',
+      python_ver: '{{ app_state.python_ver }}',
     };
     </script>
     {% endif %}
