@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-16 10:02:43'
+__update__ = '2019-06-16 13:10:07'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -83,7 +83,9 @@ app_state = {
     'password': fg_config['fgapiserver_password'],
     'apiserver': fg_config['apiserver'],
     'page': None,
-    'dbver': '',
+    'mysqlver': '',
+    'dbver': fg_config['dbver'],
+    'dbdate': '',
     'err_flag': False,
     'err_msg': False,
     'remote_addr': '',
@@ -97,7 +99,7 @@ app_state = {
 app = Flask(__name__)
 
 
-# Main page showing the dashboard
+# Home page showing info
 @app.route('/')
 def index():
     logging.debug('page: /')
@@ -109,13 +111,62 @@ def index():
         # Get running MySQL version
         query_info = fg_queries.init_query(sql='SELECT VERSION()')
         query_info = fg_queries.do_query(query_info)
-        app_state['dbver'] = query_info['sql_result'][0][0]
+        app_state['mysqlver'] = query_info['sql_result'][0][0]
+        query_info = fg_queries.init_query(
+            sql=('select version, applied from db_patches '
+                 'order by applied desc limit 1;'),
+            sql_fields=('version', 'applied'))
+        query_info = fg_queries.do_query(query_info)
+        app_state['dbver'] = query_info['sql_result'][0]['version']
+        app_state['dbdate'] = query_info['sql_result'][0]['applied']
     except fgQueriesError as e:
         app_state['err_flag'] = True
         app_state['err_msg'] = query_info['err_msg']
     # Set page name
     app_state['page'] = 'Home'
     return render_template('index.html', app_state=app_state)
+
+# Infrastructures
+@app.route('/infrastructures')
+def infrastructures():
+    logging.debug('page: infrastructures')
+    app_state['page'] = 'Infrastructures'
+    return render_template('infrastructures.html', app_state=app_state)
+
+# Applications
+@app.route('/applications')
+def applications():
+    logging.debug('page: applications')
+    app_state['page'] = 'Applications'
+    return render_template('applications.html', app_state=app_state)
+
+# Tasks
+@app.route('/tasks')
+def tasks():
+    logging.debug('page: tasks')
+    app_state['page'] = 'Tasks'
+    return render_template('tasks.html', app_state=app_state)
+
+# Users
+@app.route('/users')
+def users():
+    logging.debug('page: users')
+    app_state['page'] = 'Users'
+    return render_template('users.html', app_state=app_state)
+
+# Groups
+@app.route('/groups')
+def groups():
+    logging.debug('page: groups')
+    app_state['page'] = 'Groups'
+    return render_template('groups.html', app_state=app_state)
+
+# Roles
+@app.route('/roles')
+def roles():
+    logging.debug('page: roles')
+    app_state['page'] = 'Roles'
+    return render_template('roles.html', app_state=app_state)
 
 
 # Executing in standalone mode (debug)

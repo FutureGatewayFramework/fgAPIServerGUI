@@ -9,27 +9,37 @@
 <!-- fgAPIServerGUI info -->
 <div class="card" id="cardGenerid">
   <div class="card-header">
-    Generic FutureGateway APIServerGUI information
+    <h6><i class="fas fa-info-circle"></i> APIServerGUI</h6>
   </div>
   <div class="card-body">
    <table class="table">
     <tr><td>Node</td><td>{{ app_state.gui_node }}</td></tr>
      <tr><td>Platform</td><td>{{ app_state.gui_platform }}</td></tr>
      <tr><td>Python version</td><td>{{ app_state.python_ver }}</td></tr>
-     <tr><td>MySQL version</td><td>{{ app_state.dbver }}</td></tr>
    </table>
   </div>
+  <!--
+  <div class="card-footer text-muted">
+  </div>
+  -->
 </div>
 <br/>
 <!-- fgAPIServer info -->
 <div class="card" id="cardGenerid">
   <div class="card-header">
-    Generic FutureGateway APIServer information
+    <h6><i class="fas fa-info-circle"></i> APIServer</h6>
   </div>
   <div class="card-body">
    <table class="table">
      <tr><td>Endpoint</td><td id="tbl_apiserver">{{ app_state.apiserver }}</td></tr>
+     <tr><td>MySQL version</td><td>{{ app_state.mysqlver }}</td></tr>
+     <tr><td>DB Version</td><td>{{ app_state.dbver }}</td></tr>
+     <tr><td>Last update</td><td>{{ app_state.dbdate }}</td></tr>
    </table>
+  <!--
   </div>
+  <div class="card-footer text-muted">
+  </div>
+  -->
 </div>
 {% endblock %}

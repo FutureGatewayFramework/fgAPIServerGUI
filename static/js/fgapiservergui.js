@@ -137,15 +137,63 @@ function updateInterface() {
     case 'Home':
        updateHome();
     break;
+    case 'Infrastructures':
+       updateInfrastructures();
+    break;
+    case 'Applications':
+       updateApplications();
+    break;
+    case 'Tasks':
+       updateTasks();
+    break;
+    case 'Users':
+       updateUsers();
+    break;
+    case 'Groups':
+       updateGroups();
+    break;
+    case 'Roles':
+       updateRoles();
+    break;
     default:
       console.log("Unhandled page: " + page);
   }
 }
 
-// Updatgin Dashboard elements
+// Updatgin Home elements
 function updateHome() {
   console.log("Handling home page");
   $('#tbl_apiserver').text(FGGUI.fg_endpoint);
+}
+
+// Updatgin Home elements
+function updateInfrastructures() {
+  console.log("Handling Infrastructures page");
+}
+
+// Updatgin Applications elements
+function updateApplications() {
+  console.log("Handling Applications page");
+}
+
+// Updatgin Tasks elements
+function updateTasks() {
+  console.log("Handling Tasks page");
+}
+
+// Updatgin Users elements
+function updateUsers() {
+  console.log("Handling Users page");
+}
+
+// Updatgin Groups elements
+function updateGroups() {
+  console.log("Handling Groups page");
+}
+
+// Updatgin Roles elements
+function updateRoles() {
+  console.log("Handling Roles page");
 }
 
 // FGAPIServerGUI initialization
