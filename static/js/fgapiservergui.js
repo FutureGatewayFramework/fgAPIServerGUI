@@ -235,7 +235,7 @@ $(document).ready(function() {
         checkToken(fg_endpoint,
                    fg_accesstoken,
                    function(data) {
-                     FGGUI.fg_logged = true;
+                     FGGUI.fg_logged = data['valid'];
                      FGGUI.fg_accesstoken = fg_accesstoken;
                      updateInterface();
                    },
