@@ -91,12 +91,12 @@ function checkServer(fg_endpoint, successFn, failedFn) {
       function(data) {
         FGAPIs.config = data['config'];
         FGAPIs.setAuth(prev_auth_mode);
-        successFn(FGAPIs);
+        successFn(data);
       },
       function(data) {
         FGAPIs.reset('');
         FGAPIs.setAuth(prev_auth_mode);
-        failedFn(null);
+        failedFn(data);
       });
 }
 
@@ -107,12 +107,12 @@ function checkToken(fg_endpoint, fg_token, successFn, failedFn) {
     doGet("auth",
       function(data) {
         FGAPIs.setAuth(prev_auth_mode);
-        successFn(FGAPIs);
+        successFn(data);
       },
       function(data) {
         FGAPIs.access_token = '';
         FGAPIs.setAuth(prev_auth_mode);
-        failedFn(null);
+        failedFn(data);
       });
 }
 
@@ -128,13 +128,13 @@ function loginServer(fg_endpoint, fg_user, fg_password, successFn, failedFn) {
         console.log("access token: " + FGAPIs.toeken);
         FGAPIs.password = '*******';
         FGAPIs.setAuth(prev_auth_mode);
-        successFn(FGAPIs);
+        successFn(data);
       },
       function(data) {
         FGAPIs.token = '';
         FGAPIs.password = '';
         FGAPIs.setAuth(prev_auth_mode);
-        failedFn(null);
+        failedFn(data);
       });
 }
 
@@ -160,6 +160,8 @@ function doGet(url, successFunction, failureFunction) {
     if(FGAPIs.isAuthHeader()) {
       FGAPIs.headers["Authorization"] = FGAPIs.getAuthHeader();
     }
+    console.log("GET: " + request_url);
+    console.log("headers: " + JSON.stringify(FGAPIs.headers));
     $.ajax({
         type: "GET",
         url: request_url,
@@ -178,6 +180,8 @@ function doPost(url, reqData, successFunction, failureFunction) {
     if(FGAPIs.isAuthHeader()) {
       FGAPIs.headers["Authorization"] = FGAPIs.getAuthHeader();
     }
+    console.log("POST: " + request_url);
+    console.log("headers: " + JSON.stringify(FGAPIs.headers));
     $.ajax({
         type: "POST",
         url: request_url,
@@ -199,6 +203,8 @@ function doDelete(url, successFunction, failureFunction) {
     if(FGAPIs.isAuthHeader()) {
       headers["Authorization"] = FGAPIs.getAuthHeader();
     }
+    console.log("DELETE: " + request_url);
+    console.log("headers: " + JSON.stringify(FGAPIs.headers));
     $.ajax({
         type: "DELETE",
         url: request_url,

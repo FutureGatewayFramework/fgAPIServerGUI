@@ -30,7 +30,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-16 13:10:07'
+__update__ = '2019-06-17 17:08:34'
 
 # Custom logger
 logger = logging.getLogger(__name__)
