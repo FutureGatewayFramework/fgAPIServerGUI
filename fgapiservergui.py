@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-17 17:08:34'
+__update__ = '2019-06-17 22:50:18'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -130,11 +130,23 @@ def index():
 
 # Infrastructures
 @app.route('/infrastructures')
-def infrastructures():
+def infras():
     logging.debug('page: infrastructures')
     app_state['page'] = 'Infrastructures'
     app_state['pageaddr'] = '/infrastructures'
     return render_template('infrastructures.html', app_state=app_state)
+
+# Infrastructure(x)
+@app.route('/infrastructures/<infra_id>')
+def infras_id(infra_id):
+    logging.debug('page: infrastructures/' + infra_id)
+    app_state['page'] = 'Infrastructure'
+    app_state['pageaddr'] =\
+        '/infrastructures/' + infra_id
+    return render_template(
+        'infrastructure.html',
+        app_state=app_state,
+        infra_id=infra_id)
 
 # Applications
 @app.route('/applications')

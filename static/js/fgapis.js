@@ -138,6 +138,22 @@ function loginServer(fg_endpoint, fg_user, fg_password, successFn, failedFn) {
       });
 }
 
+function loadInfrastructures(fg_endpoint, fg_token, successFn, failedFn) {
+  FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("infrastructures",
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        successFn(data);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(data);
+      });
+}
+
 /*
  * Low level functions handling FG API calls
  */

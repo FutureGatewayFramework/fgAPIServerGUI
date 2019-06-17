@@ -131,29 +131,61 @@ function updateInterface() {
   $('#fgTestURL').prop('placeholder', FGGUI.fg_endpoint);
   $('#searchForm').hide();
 
+  // Get rendered page
+  page = APPSTATE.page;
+
   // Page specific composition
-  page = $('#breadcumbBar').find('li').last().prev().find('a').text();
-  switch(page) {
-    case 'Home':
-       updateHome();
+  console.log("Page from breadcumBar: " + page);
+  switch(page.toLocaleLowerCase()) {
+    case 'home':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>');
+      updateHome();
     break;
-    case 'Infrastructures':
-       updateInfrastructures();
+    case 'infrastructures':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/infrastructures">Infrastructures</li>');
+      updateInfrastructures();
     break;
-    case 'Applications':
-       updateApplications();
+    case 'infrastructure':
+      var pages_array = APPSTATE.pageaddr.split('/');
+      var infra_id = pages_array[pages_array.length - 1];
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/infrastructures">Infrastructures</li>' +
+        '<li class="breadcrumb-item active"><a href="/infrastructures/'+ infra_id +'">' + infra_id + '</li>');
+      updateInfrastructure();
     break;
-    case 'Tasks':
-       updateTasks();
+    case 'applications':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/applications">Applications</li>');
+      updateApplications();
     break;
-    case 'Users':
-       updateUsers();
+    case 'tasks':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/tasks">Tasks</li>');
+      updateTasks();
     break;
-    case 'Groups':
+    case 'users':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/users">Users</li>');
+      updateUsers();
+    break;
+    case 'groups':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/grops">Grops</li>');
        updateGroups();
     break;
-    case 'Roles':
-       updateRoles();
+    case 'roles':
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="/roles">Roles</li>');
+      updateRoles();
     break;
     default:
       console.log("Unhandled page: " + page);
@@ -178,9 +210,66 @@ function updateHome() {
   setupPageContent();
 }
 
-// Updatgin Home elements
+// Updatign single infrastructure
+function updateInfrastructure() {
+  // Update breadcumb Infrastructures/Infrastructure (x)
+  //$('#breadcumbBar').prepend('ciccio');
+}
+
+// Updating Infrastructure elements
 function updateInfrastructures() {
   console.log("Handling Infrastructures page");
+  // Check the FG endpoint
+  if(FGGUI.fg_logged) {
+    loadInfrastructures(
+      FGGUI.fg_endpoint,
+      FGGUI.fg_accesstoken,
+      function(data) {
+        // Save last successfull FG endpoint
+        console.log("infrastructures: " + JSON.stringify(data));
+        FGGUI['infrastructures'] = data['infrastructures'];
+        if(FGGUI.infrastructures.length > 0) {
+          var table_header = 
+            '<tr>' +
+            '<th>Id</th>' +
+            '<th>Name</th>' +
+            '<th>Enabled</th>' +
+            '<th>Virtual</th>' +
+            '</tr>';
+          var table_rows = '';
+          for(i=0; i<FGGUI.infrastructures.length; i++) {
+            console.log(FGGUI.infrastructures[i]);
+              table_rows +=
+              '<tr id="infra_'+ FGGUI.infrastructures[i]['id'] + '">' +
+              '<td>' + FGGUI.infrastructures[i]['id'] +'</td>' +
+              '<td>' + FGGUI.infrastructures[i]['name'] +'</td>' +
+              '<td>' + FGGUI.infrastructures[i]['enabled'] +'</td>' +
+              '<td>' + FGGUI.infrastructures[i]['virtual'] +'</td>' +
+              '</tr>';
+          }
+          $('#pageContent').append(
+              '<table class="table table-hover" id="infraTable">' +
+              table_header +
+              table_rows +
+              '</table>');
+          for(i=0; i<FGGUI.infrastructures.length; i++) {
+            $("#infra_" + FGGUI.infrastructures[i]['id']).on('click', function(e) {
+              console.log("clicked infra: " + this.id);
+              e.preventDefault();
+              window.location = "/infrastructures/" + this.id.split('_')[1];
+            });
+          }
+        } else {
+          $('#pageContent').append(
+            '<div class="alert alert-primary" role="alert">' +
+            'No infrastructures available' +
+            '</div>');
+        }
+        
+      },
+      function(data) {
+      });
+  }
   setupPageContent();
 }
 
