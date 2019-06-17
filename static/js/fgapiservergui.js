@@ -178,7 +178,7 @@ function updateInterface() {
     case 'groups':
       $('#breadcumbBar').html(
         '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/groups">Grops</li>');
+        '<li class="breadcrumb-item active"><a href="/groups">Groups</li>');
        updateGroups();
     break;
     case 'roles':
