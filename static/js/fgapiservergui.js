@@ -24,7 +24,12 @@ FGGUI = {
 var loginAlert =
       '<div class="alert alert-primary" role="alert" id="alertContent">' +
       'Page content is not available until you <a href="#loginModal" data-toggle="modal" data-target="#loginModal">Login</a>' +
-      '</div>'
+      '</div>';
+
+var checkAlert =
+      '<div class="alert alert-primary" role="alert" id="alertContent">' +
+      'Page content is not available until you <a href="#checkModal" data-toggle="modal" data-target="#configModal">Check</a> the APIServer' +
+      '</div>';
 
 !function(l){
   "use strict";
@@ -32,18 +37,17 @@ var loginAlert =
   l("#checkFGAPIServer").on("click", function(e) {
     e.preventDefault();
     // FG endpoint to check
-    var fg_check = $('#fgTestURL').prop('placeholder');
-    //var fg_check = FGGUI.fg_endpoint;
-    console.log("server to test: " + fg_check);
+    var fg_url = $('#fgTestURL').val();
+    console.log("server to test: " + fg_url);
     // Ensure the endpoint finishes with '/'
-    fg_check = fg_check.slice(-1)=='/'?fg_check:fg_check + '/';
+    fg_url = fg_url.slice(-1)=='/'?fg_url:fg_url + '/';
     // Check the FG endpoint
-    checkServer(fg_check,
-      function(fgapis) {
+    checkServer(fg_url,
+      function(data) {
         // Save last successfull FG endpoint
-        FGGUI.fg_endpoint = fgapis.fg_endpoint;
+        FGGUI.fg_endpoint = FGAPIs.fg_endpoint;
         FGGUI.fg_checked = true;
-        createCookie('fg_endpoint', fgapis.fg_endpoint, 365);
+        createCookie('fg_endpoint', FGGUI.fg_endpoint , 365);
         updateInterface();
       },
       function(o) {
@@ -144,52 +148,52 @@ function updateInterface() {
   switch(page.toLocaleLowerCase()) {
     case 'home':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>');
+        '<li class="breadcrumb-item active"><a href="{{ app_state.url_prefix }}/">Home</li>');
       updateHome();
     break;
     case 'infrastructures':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/infrastructures">Infrastructures</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/infrastructures">Infrastructures</li>');
       updateInfrastructures();
     break;
     case 'infrastructure':
       var pages_array = APPSTATE.pageaddr.split('/');
       var infra_id = pages_array[pages_array.length - 1];
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/infrastructures">Infrastructures</li>' +
-        '<li class="breadcrumb-item active"><a href="/infrastructures/'+ infra_id +'">' + infra_id + '</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/infrastructures">Infrastructures</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/infrastructures/'+ infra_id +'">' + infra_id + '</li>');
       updateInfrastructure();
     break;
     case 'applications':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/applications">Applications</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/applications">Applications</li>');
       updateApplications();
     break;
     case 'tasks':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/tasks">Tasks</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/tasks">Tasks</li>');
       updateTasks();
     break;
     case 'users':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/users">Users</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/users">Users</li>');
       updateUsers();
     break;
     case 'groups':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/groups">Groups</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/groups">Groups</li>');
        updateGroups();
     break;
     case 'roles':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="/">Home</li>' +
-        '<li class="breadcrumb-item active"><a href="/roles">Roles</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/roles">Roles</li>');
       updateRoles();
     break;
     default:
@@ -200,14 +204,16 @@ function updateInterface() {
 // Updatgin Home elements
 function updateHome() {
   console.log("Handling home page");
+  if(!FGGUI.fg_checked) {
+    $('#pageContent').html(checkAlert);
+    $('#cardsIndex').hide();
+    return;
+  }
   if(FGGUI.fg_logged) {
+    $('#cardsIndex').show();
     $('#tbl_apiserver').text(FGGUI.fg_endpoint);
-    $('#pageContent').show();
-    $('#alertContent').hide();
   } else {
-    $('#pageContent').append(loginAlert);
-    $('#pageContent').hide();
-    $('#alertContent').show();
+    $('#pageContent').html(loginAlert);
   }
 }
 
@@ -260,7 +266,7 @@ function updateInfrastructures() {
             $("#infra_" + FGGUI.infrastructures[i]['id']).on('click', function(e) {
               console.log("clicked infra: " + this.id);
               e.preventDefault();
-              window.location = "/infrastructures/" + this.id.split('_')[1];
+              window.location = APPSTATE.url_prefix + '/infrastructures/' + this.id.split('_')[1];
             });
           }
         } else {
@@ -272,11 +278,14 @@ function updateInfrastructures() {
         
       },
       function(data) {
+        $('#pageContent').append(
+            '<div class="alert alert-danger" role="alert">' +
+            'Unable to recover infrastructures, please check your user rights or authorization configuration' +
+            '</div>');
       });
   } else {
     $('#pageContent').append(loginAlert);
   }
-  setupPageContent();
 }
 
 // Updatgin Applications elements
@@ -337,8 +346,9 @@ $(document).ready(function() {
   var fg_endpoint = accessCookie('fg_endpoint');
   console.log("fg_endpoint: " + fg_endpoint);
   if(fg_endpoint == "") {
-    console.log("1st Time, endpoint: " + fg_endpoint);
+    console.log("1st Time, endpoint: " + APPSTATE.apiserver);
     FGGUI.reset(fg_endpoint);
+    updateInterface();
   } else {
     console.log("! 1st Time, endpoint: " + fg_endpoint);
     FGGUI.reset(fg_endpoint);

@@ -35,7 +35,7 @@ EOF
       while read rel_line; do
           rel_item=$(echo $rel_line | awk -F'=' '{ print $1 }' | xargs echo)
           echo "    Processing line item: '$rel_item'"
-          CMD=$(echo "sed -i '' s/^${rel_item}.*/\"$rel_line\"/ $pyfile")
+          CMD=$(echo "sed -i.bck s/^${rel_item}.*/\"$rel_line\"/ $pyfile && rm -f $pyfile.bck")
           eval $CMD
       done < $TMP
   done

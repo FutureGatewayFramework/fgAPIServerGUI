@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-17 22:50:18'
+__update__ = '2019-06-18 10:46:49'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -62,10 +62,6 @@ check_db_reg(fg_config)
 # Database queries object ckeck
 check_db_queries()
 
-# Create root logger object and configure logger
-logging.config.fileConfig('logging.conf')
-
-
 # Futuregateway python APIs object
 fgAPIs = FutureGatewayAPIs(
     fg_config['apiserver'],
@@ -76,6 +72,7 @@ fgAPIs = FutureGatewayAPIs(
 # Generate application state object
 app_state = {
     'fgapis': fgAPIs,
+    'url_prefix': fg_config['url_prefix'],
     'name': fg_config['service_name'],
     'logged': False,
     'configured': False,
@@ -98,6 +95,7 @@ app_state = {
 
 # Create Flask app
 app = Flask(__name__)
+app.config['APPLICATION_ROOT'] = app_state['url_prefix']
 
 
 # Home page showing info

@@ -34,8 +34,37 @@ pip install -r requirements.txt
 python futuregatewaygui.py
 ```
 
+### Configure GUI with WSGI
 To execute the server in a production environment, the application needs to be executed via a wgsi engine such as: [apache+mod_wsgi][apache+mod_wsgi] for apache, [Nginx+uWSGI][Nginx+uWSGI] (used by FG Setup), [gunicorn][Gunicorn] and many others.
 
+Below an example of fgAPIServerGUI configuration for Apache mod_wsgi. In this case it is also needed to setup in the `fgapiserver.yaml` configuration file, the value `url_prefix: /fgapiservergui`
+
+```
+<IfModule wsgi_module>
+    <VirtualHost *:80>
+        WSGIPassAuthorization On
+        WSGIDaemonProcess fgapiservergui user=futuregateway group=futuregateway processes=2 threads=5 home=/home/futuregateway/fgAPIServerGUI python-path=/home/futuregateway/fgAPIServerGUI python-home=/home/futuregateway/fgAPIServerGUI/.venv
+        WSGIScriptAlias /fgapiservergui /home/futuregateway/fgAPIServerGUI/fgapiservergui.wsgi
+        <Location /fgapiservergui>
+                WSGIProcessGroup fgapiservergui
+        </Location>
+       <Directory /home/futuregateway/fgAPIServerGUI>
+                Order deny,allow
+                Allow from all
+                Options All
+                AllowOverride All
+                Require all granted
+        </Directory>
+        <Directory /home/futuregateway/fgAPIServerGUI/static>
+                Order deny,allow
+                Allow from all
+                Options All
+                AllowOverride All
+                Require all granted
+        </Directory>
+    </VirtualHost>
+</IfModule>
+```
 
 [gunicorn]: <https://mattgathu.github.io/multiprocessing-logging-in-python/>
 [Nginx+uWSGI]: <https://www.digitalocean.com/community/tutorials/how-to-set-up-uwsgi-and-nginx-to-serve-python-apps-on-ubuntu-14-04>

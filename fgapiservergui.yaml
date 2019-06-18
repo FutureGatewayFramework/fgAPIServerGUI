@@ -26,6 +26,7 @@
 # fgapiserverdaemon settings
 fgapiservergui:
   service_name: FutureGateway API Server GUI
+  url_prefix: '' 
   debug: True
   json_indent: 4
   logging_conf: logging.conf
@@ -38,7 +39,7 @@ fgapiservergui:
 fgapiserver_db:
   dbver: 0.0.13
   fgapisrv_db_host: 127.0.0.1
-  fgapisrv_db_port: 3306
+  fgapisrv_db_port: 32774
   fgapisrv_db_user: fgapiserver
   fgapisrv_db_pass: fgapiserver_password
   fgapisrv_db_name: fgapiserver

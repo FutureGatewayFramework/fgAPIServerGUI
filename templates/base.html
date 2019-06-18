@@ -16,6 +16,7 @@
     <script>
     var APPSTATE = {
       name: '{{ app_state.name }}',
+      url_prefix: '{{ app_state.url_prefix }}',
       logged: '{{ app_state.logged }}'.toLowerCase() == true,
       configured: '{{ app_state.configured }}'.toLowerCase() == true,
       user: '{{ app_state.user }}',
@@ -42,7 +43,7 @@
   <body id="page-top">
     <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
 
-      <a class="navbar-brand mr-1" href="/">{{ app_state.name }}</a>
+      <a class="navbar-brand mr-1" href="{{ app_state.url_prefix }}/">{{ app_state.name }}</a>
       <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
         <i class="fas fa-bars"></i>
       </button>
@@ -95,7 +96,7 @@
 
       <!-- Home menu -->
       <li class="nav-item">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="{{ app_state.url_prefix }}/">
           <i class="fas fa-home"></i>
           <span>Home</span>
         </a>
@@ -109,9 +110,9 @@
         </a>
         <div class="dropdown">
           <div class="dropdown-menu" aria-labelledby="iatDropdown">
-            <a class="dropdown-item" href="/infrastructures"><i class="fas fa-network-wired"></i> Infrastrucures</a>
-            <a class="dropdown-item" href="/applications"><i class="far fa-window-maximize"></i> Applications</a>
-            <a class="dropdown-item" href="/tasks"><i class="fas fa-server"></i> Tasks</a>
+            <a class="dropdown-item" href="{{ app_state.url_prefix }}/infrastructures"><i class="fas fa-network-wired"></i> Infrastrucures</a>
+            <a class="dropdown-item" href="{{ app_state.url_prefix }}/applications"><i class="far fa-window-maximize"></i> Applications</a>
+            <a class="dropdown-item" href="{{ app_state.url_prefix }}/tasks"><i class="fas fa-server"></i> Tasks</a>
           </div>
         </div>
       </li>
@@ -124,9 +125,9 @@
           </a>
           <div class="dropdown">
             <div class="dropdown-menu" aria-labelledby="ugrDropdown">
-              <a class="dropdown-item" href="/users"><i class="fas fa-user"></i> Users</a>
-              <a class="dropdown-item" href="/groups"><i class="fas fa-users"></i> Groups</a>
-              <a class="dropdown-item" href="/roles"><i class="fas fa-user-tag"></i> Roles</a>
+              <a class="dropdown-item" href="{{ app_state.url_prefix }}/users"><i class="fas fa-user"></i> Users</a>
+              <a class="dropdown-item" href="{{ app_state.url_prefix }}/groups"><i class="fas fa-users"></i> Groups</a>
+              <a class="dropdown-item" href="{{ app_state.url_prefix }}/roles"><i class="fas fa-user-tag"></i> Roles</a>
             </div>
           </div>
         </li>
@@ -146,7 +147,7 @@
       <!-- old theme Menu 
       <li class="nav-item dropdown">
       <li class="nav-item">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="{{ app_state.url_prefix }}/">
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Home</span>
         </a>

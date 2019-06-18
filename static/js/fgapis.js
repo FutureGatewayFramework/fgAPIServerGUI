@@ -89,6 +89,7 @@ function checkServer(fg_endpoint, successFn, failedFn) {
     var prev_auth_mode = FGAPIs.setAuth('NONE');
     doGet("",
       function(data) {
+        FGAPIs.setEndPoint(fg_endpoint);
         FGAPIs.config = data['config'];
         FGAPIs.setAuth(prev_auth_mode);
         successFn(data);
