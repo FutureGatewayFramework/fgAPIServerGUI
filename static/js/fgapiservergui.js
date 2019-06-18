@@ -21,6 +21,11 @@ FGGUI = {
   }
 };
 
+var loginAlert =
+      '<div class="alert alert-primary" role="alert" id="alertContent">' +
+      'Page content is not available until you <a href="#loginModal" data-toggle="modal" data-target="#loginModal">Login</a>' +
+      '</div>'
+
 !function(l){
   "use strict";
   // Settings Check Server Button click event
@@ -192,28 +197,27 @@ function updateInterface() {
   }
 }
 
-// Toggle between Alert and Page content
-function setupPageContent() {
-  if(FGGUI.fg_logged) {
-      $('#pageContent').show()
-      $('#alertContent').hide()
-  } else {
-      $('#pageContent').hide()
-      $('#alertContent').show()
-  }
-}
-
 // Updatgin Home elements
 function updateHome() {
   console.log("Handling home page");
-  $('#tbl_apiserver').text(FGGUI.fg_endpoint);
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#tbl_apiserver').text(FGGUI.fg_endpoint);
+    $('#pageContent').show();
+    $('#alertContent').hide();
+  } else {
+    $('#pageContent').append(loginAlert);
+    $('#pageContent').hide();
+    $('#alertContent').show();
+  }
 }
 
 // Updatign single infrastructure
 function updateInfrastructure() {
-  // Update breadcumb Infrastructures/Infrastructure (x)
-  //$('#breadcumbBar').prepend('ciccio');
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('infrastructure');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // Updating Infrastructure elements
@@ -269,6 +273,8 @@ function updateInfrastructures() {
       },
       function(data) {
       });
+  } else {
+    $('#pageContent').append(loginAlert);
   }
   setupPageContent();
 }
@@ -276,31 +282,51 @@ function updateInfrastructures() {
 // Updatgin Applications elements
 function updateApplications() {
   console.log("Handling Applications page");
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('Applications');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // Updatgin Tasks elements
 function updateTasks() {
   console.log("Handling Tasks page");
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('Tasks');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // Updatgin Users elements
 function updateUsers() {
   console.log("Handling Users page");
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('Users');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // Updatgin Groups elements
 function updateGroups() {
   console.log("Handling Groups page");
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('groups');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // Updatgin Roles elements
 function updateRoles() {
   console.log("Handling Roles page");
-  setupPageContent();
+  if(FGGUI.fg_logged) {
+    $('#pageContent').append('roles');
+  } else {
+    $('#pageContent').append(loginAlert);
+  }
 }
 
 // FGAPIServerGUI initialization
@@ -340,5 +366,4 @@ $(document).ready(function() {
       }
     );
   }
-  updateInterface();
 });
