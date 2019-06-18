@@ -220,7 +220,8 @@ function updateHome() {
 // Updatign single infrastructure
 function updateInfrastructure() {
   if(FGGUI.fg_logged) {
-    $('#pageContent').append('infrastructure');
+    var infra_id = $('#breadcumbBar').find('li').last().text();
+    $('#pageContent').append('infrastructure: ' + infra_id);
   } else {
     $('#pageContent').append(loginAlert);
   }
