@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-18 10:46:49'
+__update__ = '2019-06-18 14:46:39'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -72,7 +72,10 @@ fgAPIs = FutureGatewayAPIs(
 # Generate application state object
 app_state = {
     'fgapis': fgAPIs,
-    'url_prefix': fg_config['url_prefix'],
+    'url_prefix':
+        '/' + fg_config['url_prefix']
+        if fg_config['url_prefix'] != '' and fg_config['url_prefix'][0] != '/'
+        else fg_config['url_prefix'],
     'name': fg_config['service_name'],
     'logged': False,
     'configured': False,
