@@ -205,14 +205,14 @@ function updateInterface() {
 function updateHome() {
   console.log("Handling home page");
   if(!FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').html(checkAlert);
-    $('#cardsIndex').hide();
     return;
   }
   if(FGGUI.fg_logged) {
-    $('#cardsIndex').show();
     $('#tbl_apiserver').text(FGGUI.fg_endpoint);
   } else {
+    $('#pageContent').html('');
     $('#pageContent').html(loginAlert);
   }
 }
@@ -221,9 +221,11 @@ function updateHome() {
 function updateInfrastructure() {
   if(FGGUI.fg_logged) {
     var infra_id = $('#breadcumbBar').find('li').last().text();
-    $('#pageContent').append('infrastructure: ' + infra_id);
-  } else {
+    $('#pageContent').html('infrastructure: ' + infra_id);
+  } else if(FGGUI.fg_checked) {
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').append(checkAlert);
   }
 }
 
@@ -258,7 +260,7 @@ function updateInfrastructures() {
               '<td>' + FGGUI.infrastructures[i]['virtual'] +'</td>' +
               '</tr>';
           }
-          $('#pageContent').append(
+          $('#pageContent').html(
               '<table class="table table-hover" id="infraTable">' +
               table_header +
               table_rows +
@@ -284,8 +286,12 @@ function updateInfrastructures() {
             'Unable to recover infrastructures, please check your user rights or authorization configuration' +
             '</div>');
       });
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
+    $('#pageContent').html(loginAlert);
   } else {
-    $('#pageContent').append(loginAlert);
+    $('#pageContent').html('');
+    $('#pageContent').htlm(checkAlert);
   }
 }
 
@@ -294,8 +300,12 @@ function updateApplications() {
   console.log("Handling Applications page");
   if(FGGUI.fg_logged) {
     $('#pageContent').append('Applications');
-  } else {
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
   }
 }
 
@@ -304,8 +314,12 @@ function updateTasks() {
   console.log("Handling Tasks page");
   if(FGGUI.fg_logged) {
     $('#pageContent').append('Tasks');
-  } else {
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
   }
 }
 
@@ -314,8 +328,12 @@ function updateUsers() {
   console.log("Handling Users page");
   if(FGGUI.fg_logged) {
     $('#pageContent').append('Users');
-  } else {
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
   }
 }
 
@@ -324,8 +342,12 @@ function updateGroups() {
   console.log("Handling Groups page");
   if(FGGUI.fg_logged) {
     $('#pageContent').append('groups');
-  } else {
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
   }
 }
 
@@ -334,8 +356,12 @@ function updateRoles() {
   console.log("Handling Roles page");
   if(FGGUI.fg_logged) {
     $('#pageContent').append('roles');
-  } else {
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html('');
     $('#pageContent').append(loginAlert);
+  } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
   }
 }
 
