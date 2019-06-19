@@ -72,6 +72,42 @@ var indexContent =
 '      </div>' +
 '    </div>';
 
+var infraContent = 
+'  <!-- Infrastructure -->' +
+'    <div class="card" id="cardInfra">' +
+'      <div class="card-header">' +
+'        <h6><i class="fas fa-info-circle"></i> Infrastructure</h6>' +
+'      </div>' +
+'      <div class="card-body">' +
+'       <table class="table table-hover" id="tableInfra">' +
+'        <tr><th>Name</th><th>Value</th></tr>' +
+'       </table>' +
+'      </div>' +
+'    <!--' +
+'    <div class="card-footer text-muted">' +
+'    </div>' +
+'    -->' +
+'    </div>' +
+'' +
+'    <br/>' +
+'' +
+'    <!-- Infrastructure parameters -->' +
+'    <div class="card" id="cardInfraParams">' +
+'      <div class="card-header">' +
+'        <h6><i class="fas fa-info-circle"></i> Infrastructure parameters</h6>' +
+'      </div>' +
+'      <div class="card-body">' +
+'        <table class="table table-hover" id="tableInfraParams">' +
+'          <tr><th>Name</td><th>Value</th></tr>' +
+'        </table>' +
+'        <!--' +
+'        </div>' +
+'        <div class="card-footer text-muted">' +
+'        </div>' +
+'        -->' +
+'      </div>' +
+'    </div>';
+
 
 !function(l){
   "use strict";
@@ -126,13 +162,13 @@ var indexContent =
                   FGGUI.fg_accesstoken = token;
                   // Save last successfull FG access token
                   createCookie('fg_accesstoken', token, 365);
-                  updateInterface();
                   console.log('Logged successfully, token: ' + token);
+                  updateInterface();
                 },
                 function() {
                   FGGUI.fg_logged = false;
-                  updateInterface();
                   console.log('Logged unsuccessfully');
+                  updateInterface();
                 });
   }),
   l("#logoutSubmitButton").on('click', function(e) {
@@ -144,17 +180,17 @@ var indexContent =
 
 function createCookie(cookieName, cookieValue, daysToExpire) {
   var date = new Date();
-  date.setTime(date.getTime()+(daysToExpire*24*60*60*1000));
+  date.setTime(date.getTime()+(daysToExpire*24*60*60*daysToExpire));
   document.cookie = cookieName + "=" + cookieValue + "; expires=" + date.toGMTString();
 }
 
 function accessCookie(cookieName) {
   var name = cookieName + "=";
   var allCookieArray = document.cookie.split(';');
-  for(var i=0; i<allCookieArray.length; i++) {
+  for(var i  =0; i < allCookieArray.length; i++) {
     var temp = allCookieArray[i].trim();
-    if (temp.indexOf(name)==0)
-    return temp.substring(name.length,temp.length);
+    if (temp.indexOf(name) == 0)
+    return temp.substring(name.length, temp.length);
   }
   return "";
 }
@@ -269,7 +305,43 @@ function updateHome() {
 function updateInfrastructure() {
   if(FGGUI.fg_logged) {
     var infra_id = $('#breadcumbBar').find('li').last().text();
-    $('#pageContent').html('infrastructure: ' + infra_id);
+    loadInfrastructure(
+      infra_id,
+      FGGUI.fg_endpoint,
+      FGGUI.fg_accesstoken,
+      function(data) {
+        console.log(JSON.stringify(data));
+        $('#pageContent').html(infraContent);
+        var table_rows =
+          '<tr><td>Name</td><td>' + data['name'] + '</td></tr>' +
+          '<tr><td>Description</td><td>' + data['description'] + '</td></tr>' +
+          '<tr><td>Creation</td><td>' + data['date'] + '</td></tr>' +
+          '<tr><td>Enabled</td><td>' + data['enabled'] + '</td></tr>';
+        $('#tableInfra tr:last').after(table_rows);
+        table_rows = '';
+        for(i=0; i<data['parameters'].length; i++) {
+          var param = data['parameters'][i];
+          table_rows +=
+            '<tr id="param_'+ param['name'] + '">' +
+            '<td>' + param['name'] +'</td>' +
+            '<td>' + param['value'] +'</td>' +
+            '</tr>';
+        }
+        $('#tableInfraParams tr:last').after(table_rows);
+        for(i=0; i<data['parameters'].length; i++) {
+          var param = data['parameters'][i];
+          $("#param_" + param['name']).on('click', function(e) {
+              e.preventDefault();
+              console.log("clicked param: " + this.id);
+            });
+        }
+      },
+      function(data) {
+        $('#pageContent').html(
+          '<div class="alert alert-primary" role="alert">' +
+          'Unable to load infrastructure information having id: ' + infra_id +
+          '</div>');
+      });
   } else if(FGGUI.fg_checked) {
     $('#pageContent').html(loginAlert);
   } else {
@@ -321,7 +393,7 @@ function updateInfrastructures() {
             });
           }
         } else {
-          $('#pageContent').append(
+          $('#pageContent').html(
             '<div class="alert alert-primary" role="alert">' +
             'No infrastructures available' +
             '</div>');
@@ -432,20 +504,27 @@ $(document).ready(function() {
         FGGUI.fg_checked = true;
         // Now it is time to check for exising access tokens
         var fg_accesstoken = accessCookie('fg_accesstoken');
-        checkToken(fg_endpoint,
-                   fg_accesstoken,
-                   function(data) {
-                     console.log(JSON.stringify(data['token_info']));
-                     createCookie('fg_accesstoken', fg_accesstoken , 365);
-                     FGGUI.fg_logged = data['token_info']['valid'];
-                     FGGUI.fg_accesstoken = fg_accesstoken;
-                     updateInterface();
-                   },
-                   function(data) {
-                     FGGUI.fg_logged = false;
-                     FGGUI.fg_accesstoken = '';
-                     updateInterface();
-                   });
+        console.log('checking token: ' + fg_accesstoken);
+        if(fg_accesstoken != '') {
+          checkToken(fg_endpoint,
+                     fg_accesstoken,
+                     function(data) {
+                       console.log(JSON.stringify(data['token_info']));
+                       createCookie('fg_accesstoken', fg_accesstoken , 365);
+                       FGGUI.fg_logged = data['token_info']['valid'];
+                       FGGUI.fg_accesstoken = fg_accesstoken;
+                       updateInterface();
+                     },
+                     function(data) {
+                       FGGUI.fg_logged = false;
+                       FGGUI.fg_accesstoken = '';
+                       updateInterface();
+                     });
+        } else {
+          FGGUI.fg_logged = false;
+          FGGUI.fg_accesstoken = '';
+          updateInterface();
+        }
       },
       function(data) {
         FGGUI.fg_checked = false;

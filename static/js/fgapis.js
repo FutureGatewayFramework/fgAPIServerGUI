@@ -155,6 +155,22 @@ function loadInfrastructures(fg_endpoint, fg_token, successFn, failedFn) {
       });
 }
 
+function loadInfrastructure(infra_id, fg_endpoint, fg_token, successFn, failedFn) {
+  FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("infrastructures/" + infra_id,
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        successFn(data);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(data);
+      });
+}
+
 /*
  * Low level functions handling FG API calls
  */
@@ -178,7 +194,7 @@ function doGet(url, successFunction, failureFunction) {
       FGAPIs.headers["Authorization"] = FGAPIs.getAuthHeader();
     }
     console.log("GET: " + request_url);
-    console.log("headers: " + JSON.stringify(FGAPIs.headers));
+    console.log("GET headers: " + JSON.stringify(FGAPIs.headers));
     $.ajax({
         type: "GET",
         url: request_url,
@@ -186,8 +202,14 @@ function doGet(url, successFunction, failureFunction) {
         cache: false,
         headers: FGAPIs.headers,
         crossDomain: true,
-        success: successFunction,
-        error: failureFunction
+        success: function(data) {
+          console.log("GET success:" + JSON.stringify(FGAPIs.data));
+          successFunction(data);
+        },
+        error: function(data) {
+          console.log("GET failure:" + JSON.stringify(FGAPIs.data));
+          failureFunction(data);
+        }
    });
 }
 
