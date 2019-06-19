@@ -313,11 +313,23 @@ function updateInfrastructure() {
         console.log(JSON.stringify(data));
         $('#pageContent').html(infraContent);
         var table_rows =
-          '<tr><td>Name</td><td>' + data['name'] + '</td></tr>' +
-          '<tr><td>Description</td><td>' + data['description'] + '</td></tr>' +
+          '<tr id="infraName"><td>Name</td><td>' + data['name'] + '</td></tr>' +
+          '<tr id="infraDesc"><td>Description</td><td>' + data['description'] + '</td></tr>' +
           '<tr><td>Creation</td><td>' + data['date'] + '</td></tr>' +
-          '<tr><td>Enabled</td><td>' + data['enabled'] + '</td></tr>';
+          '<tr id="infraEnabled"><td>Enabled</td><td>' + data['enabled'] + '</td></tr>';
         $('#tableInfra tr:last').after(table_rows);
+        $("#infraName").on('click', function(e) {
+          e.preventDefault();
+          console.log("clicked infra field: " + this.id);
+        });
+         $("#infraDesc").on('click', function(e) {
+          e.preventDefault();
+          console.log("clicked infra field: " + this.id);
+        });
+        $("#infraEnabled").on('click', function(e) {
+          e.preventDefault();
+          console.log("clicked infra field: " + this.id);
+        });
         table_rows = '';
         for(i=0; i<data['parameters'].length; i++) {
           var param = data['parameters'][i];
