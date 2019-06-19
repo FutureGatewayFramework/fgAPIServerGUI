@@ -31,6 +31,48 @@ var checkAlert =
       'Page content is not available until you <a href="#checkModal" data-toggle="modal" data-target="#configModal">Check</a> the APIServer' +
       '</div>';
 
+var indexContent = 
+'  <!-- fgAPIServerGUI info -->' +
+'    <div class="card" id="cardGenerid">' +
+'      <div class="card-header">' +
+'        <h6><i class="fas fa-info-circle"></i> APIServerGUI</h6>' +
+'      </div>' +
+'      <div class="card-body">' +
+'       <table class="table">' +
+'        <tr><td>Node</td><td>' + APPSTATE.gui_node + '</td></tr>' +
+'         <tr><td>Platform</td><td>' + APPSTATE.gui_platform + '</td></tr>' +
+'         <tr><td>Python version</td><td>' + APPSTATE.python_ver + '</td></tr>' +
+'       </table>' +
+'      </div>' +
+'    <!--' +
+'    <div class="card-footer text-muted">' +
+'    </div>' +
+'    -->' +
+'    </div>' +
+'' +
+'    <br/>' +
+'' +
+'    <!-- fgAPIServer info -->' +
+'    <div class="card" id="cardGenerid">' +
+'      <div class="card-header">' +
+'        <h6><i class="fas fa-info-circle"></i> APIServer</h6>' +
+'      </div>' +
+'      <div class="card-body">' +
+'        <table class="table">' +
+'          <tr><td>Endpoint</td><td id="tbl_apiserver">' + APPSTATE.apiserver + '</td></tr>' +
+'          <tr><td>MySQL version</td><td>' + APPSTATE.mysqlver + '</td></tr>' +
+'          <tr><td>DB Version</td><td>' + APPSTATE.dbver + '</td></tr>' +
+'          <tr><td>Last update</td><td>' + APPSTATE.dbdate + '</td></tr>' +
+'        </table>' +
+'        <!--' +
+'        </div>' +
+'        <div class="card-footer text-muted">' +
+'        </div>' +
+'        -->' +
+'      </div>' +
+'    </div>';
+
+
 !function(l){
   "use strict";
   // Settings Check Server Button click event
@@ -92,6 +134,11 @@ var checkAlert =
                   updateInterface();
                   console.log('Logged unsuccessfully');
                 });
+  }),
+  l("#logoutSubmitButton").on('click', function(e) {
+    FGGUI.fg_logged = false;
+    createCookie('fg_accesstoken', '', 365);
+    updateInterface();
   })
 }(jQuery);
 
@@ -148,7 +195,7 @@ function updateInterface() {
   switch(page.toLocaleLowerCase()) {
     case 'home':
       $('#breadcumbBar').html(
-        '<li class="breadcrumb-item active"><a href="{{ app_state.url_prefix }}/">Home</li>');
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>');
       updateHome();
     break;
     case 'infrastructures':
@@ -210,6 +257,7 @@ function updateHome() {
     return;
   }
   if(FGGUI.fg_logged) {
+    $('#pageContent').html(indexContent);
     $('#tbl_apiserver').text(FGGUI.fg_endpoint);
   } else {
     $('#pageContent').html('');
@@ -223,9 +271,9 @@ function updateInfrastructure() {
     var infra_id = $('#breadcumbBar').find('li').last().text();
     $('#pageContent').html('infrastructure: ' + infra_id);
   } else if(FGGUI.fg_checked) {
-    $('#pageContent').append(loginAlert);
+    $('#pageContent').html(loginAlert);
   } else {
-    $('#pageContent').append(checkAlert);
+    $('#pageContent').html(checkAlert);
   }
 }
 
@@ -387,6 +435,8 @@ $(document).ready(function() {
         checkToken(fg_endpoint,
                    fg_accesstoken,
                    function(data) {
+                     console.log(JSON.stringify(data['token_info']));
+                     createCookie('fg_accesstoken', fg_accesstoken , 365);
                      FGGUI.fg_logged = data['token_info']['valid'];
                      FGGUI.fg_accesstoken = fg_accesstoken;
                      updateInterface();
