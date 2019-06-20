@@ -28,7 +28,7 @@ var loginAlert =
 
 var checkAlert =
       '<div class="alert alert-primary" role="alert" id="alertContent">' +
-      'Page content is not available until you <a href="#checkModal" data-toggle="modal" data-target="#configModal">Check</a> the APIServer' +
+      'Page content is not available until you <a href="#attachModal" data-toggle="modal" data-target="#attachModal">Check</a> the APIServer' +
       '</div>';
 
 var indexContent = 
@@ -161,6 +161,7 @@ var infraContent =
                   FGGUI.fg_logged = true;
                   FGGUI.fg_accesstoken = token;
                   // Save last successfull FG access token
+                  eraseCookie('fg_accesstoken');
                   createCookie('fg_accesstoken', token, 365);
                   console.log('Logged successfully, token: ' + token);
                   updateInterface();
@@ -168,20 +169,39 @@ var infraContent =
                 function() {
                   FGGUI.fg_logged = false;
                   console.log('Logged unsuccessfully');
+                  eraseCookie('fg_accesstoken');
                   updateInterface();
                 });
   }),
   l("#logoutSubmitButton").on('click', function(e) {
     FGGUI.fg_logged = false;
-    createCookie('fg_accesstoken', '', 365);
+    eraseCookie('fg_accesstoken');
+    updateInterface();
+  }),
+  l("#detachSubmitButton").on('click', function(e) {
+    FGGUI.fg_logged = false;
+    FGGUI.fg_checked = false;
+    eraseCookie('fg_accesstoken');
+    eraseCookie('fg_endpoint');
     updateInterface();
   })
 }(jQuery);
 
-function createCookie(cookieName, cookieValue, daysToExpire) {
-  var date = new Date();
-  date.setTime(date.getTime()+(daysToExpire*24*60*60*daysToExpire));
-  document.cookie = cookieName + "=" + cookieValue + "; expires=" + date.toGMTString();
+
+function createCookie(name,value,days,path) {
+    if(days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (24 * 60 * 60 * 1000 * days));
+        var expires = "expires=" + date.toGMTString();
+    } else {
+        var expires = "";
+    }
+    if(path == null) {
+      path = '/';
+    }
+    var cookie_entry = name + "=" + value + "; " + expires + "; path=" + path;
+    console.log("Setting cookie: " + cookie_entry);
+    document.cookie = cookie_entry;
 }
 
 function accessCookie(cookieName) {
@@ -194,6 +214,11 @@ function accessCookie(cookieName) {
   }
   return "";
 }
+
+function eraseCookie(name) {
+    createCookie(name,"",-1);
+}
+
 
 // Use variable values to determine the correct interface
 function updateInterface() {
@@ -304,6 +329,9 @@ function updateHome() {
 // Updatign single infrastructure
 function updateInfrastructure() {
   if(FGGUI.fg_logged) {
+    FGGUI.fg_modfied=false;
+    FGGUI.fg_data={};
+    FGGUI.mod_data={};
     var infra_id = $('#breadcumbBar').find('li').last().text();
     loadInfrastructure(
       infra_id,
@@ -313,10 +341,13 @@ function updateInfrastructure() {
         console.log(JSON.stringify(data));
         $('#pageContent').html(infraContent);
         var table_rows =
-          '<tr id="infraName"><td>Name</td><td>' + data['name'] + '</td></tr>' +
-          '<tr id="infraDesc"><td>Description</td><td>' + data['description'] + '</td></tr>' +
+          '<tr id="infraName"><td>Name</td><td><div class="row_data" edit_type="click" col_name="infra_name">' + data['name'] + '</div></td></tr>' +
+          '<tr id="infraDesc"><td>Description</td><td><div class="row_data" edit_type="click" col_name="infra_desc">' + data['description'] + '</div></td></tr>' +
           '<tr><td>Creation</td><td>' + data['date'] + '</td></tr>' +
-          '<tr id="infraEnabled"><td>Enabled</td><td>' + data['enabled'] + '</td></tr>';
+          '<tr id="infraEnabled"><td>Enabled</td><td><div class="row_data" edit_type="click" col_name="infra_enabled">' + data['enabled'] + '</div></td></tr>';
+        FGGUI.fg_data['infra_name'] = data['name'];
+        FGGUI.fg_data['infra_desc'] = data['description'];
+        FGGUI.fg_data['infra_enabled'] = data['enabled'];
         $('#tableInfra tr:last').after(table_rows);
         $("#infraName").on('click', function(e) {
           e.preventDefault();
@@ -336,17 +367,43 @@ function updateInfrastructure() {
           table_rows +=
             '<tr id="param_'+ param['name'] + '">' +
             '<td>' + param['name'] +'</td>' +
-            '<td>' + param['value'] +'</td>' +
+            '<td><div class="row_data" edit_type="click" col_name="param_' + param['name'] + '">' + param['value'] +'</div></td>' +
             '</tr>';
+          FGGUI.fg_data['param_' +  param['name']] = param['value'];
         }
+        FGGUI.mod_data = Object.assign({}, FGGUI.fg_data);
         $('#tableInfraParams tr:last').after(table_rows);
-        for(i=0; i<data['parameters'].length; i++) {
-          var param = data['parameters'][i];
-          $("#param_" + param['name']).on('click', function(e) {
-              e.preventDefault();
-              console.log("clicked param: " + this.id);
-            });
-        }
+        $(document).on('click', '.row_data', function(e) {
+          e.preventDefault(); 
+          //make div editable
+          $(this).closest('div').attr('contenteditable', 'true');
+          //add bg css
+          $(this).addClass('bg-warning').css('padding','0px');
+          $(this).focus();
+          FGGUI.fg_currfield = $(this).text();
+        });
+        $(document).on('focusout', '.row_data', function(e) {
+          e.preventDefault();
+          var row_id = $(this).closest('tr').attr('row_id'); 
+          var row_div = $(this);
+          $(this).removeClass('bg-warning');
+          $(this).css('padding','');
+          var col_name = row_div.attr('col_name'); 
+          var col_val = row_div.html();
+          console.log(col_name + ' = ' + col_val);
+          FGGUI.mod_data[col_name] = col_val;
+          // Check if any change happened
+          FGGUI.fg_modfied = false;
+          for (var key in FGGUI.fg_data) {
+            var v1 = FGGUI.fg_data[key];
+            var v2 = FGGUI.mod_data[key];
+            if(v1 != v2) {
+              FGGUI.fg_modfied = true;
+            } else {
+              FGGUI.mod_data[key] = FGGUI.fg_data[key];
+            }
+          }
+        });
       },
       function(data) {
         $('#pageContent').html(
@@ -423,7 +480,7 @@ function updateInfrastructures() {
     $('#pageContent').html(loginAlert);
   } else {
     $('#pageContent').html('');
-    $('#pageContent').htlm(checkAlert);
+    $('#pageContent').html(checkAlert);
   }
 }
 
