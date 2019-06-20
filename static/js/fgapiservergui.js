@@ -329,9 +329,6 @@ function updateHome() {
 // Updatign single infrastructure
 function updateInfrastructure() {
   if(FGGUI.fg_logged) {
-    FGGUI.fg_modfied=false;
-    FGGUI.fg_data={};
-    FGGUI.mod_data={};
     var infra_id = $('#breadcumbBar').find('li').last().text();
     loadInfrastructure(
       infra_id,
@@ -339,71 +336,27 @@ function updateInfrastructure() {
       FGGUI.fg_accesstoken,
       function(data) {
         console.log(JSON.stringify(data));
-        $('#pageContent').html(infraContent);
-        var table_rows =
-          '<tr id="infraName"><td>Name</td><td><div class="row_data" edit_type="click" col_name="infra_name">' + data['name'] + '</div></td></tr>' +
-          '<tr id="infraDesc"><td>Description</td><td><div class="row_data" edit_type="click" col_name="infra_desc">' + data['description'] + '</div></td></tr>' +
-          '<tr><td>Creation</td><td>' + data['date'] + '</td></tr>' +
-          '<tr id="infraEnabled"><td>Enabled</td><td><div class="row_data" edit_type="click" col_name="infra_enabled">' + data['enabled'] + '</div></td></tr>';
-        FGGUI.fg_data['infra_name'] = data['name'];
-        FGGUI.fg_data['infra_desc'] = data['description'];
-        FGGUI.fg_data['infra_enabled'] = data['enabled'];
-        $('#tableInfra tr:last').after(table_rows);
-        $("#infraName").on('click', function(e) {
-          e.preventDefault();
-          console.log("clicked infra field: " + this.id);
-        });
-         $("#infraDesc").on('click', function(e) {
-          e.preventDefault();
-          console.log("clicked infra field: " + this.id);
-        });
-        $("#infraEnabled").on('click', function(e) {
-          e.preventDefault();
-          console.log("clicked infra field: " + this.id);
-        });
-        table_rows = '';
-        for(i=0; i<data['parameters'].length; i++) {
-          var param = data['parameters'][i];
-          table_rows +=
-            '<tr id="param_'+ param['name'] + '">' +
-            '<td>' + param['name'] +'</td>' +
-            '<td><div class="row_data" edit_type="click" col_name="param_' + param['name'] + '">' + param['value'] +'</div></td>' +
-            '</tr>';
-          FGGUI.fg_data['param_' +  param['name']] = param['value'];
+
+        infoData = {}
+        infoData['name'] = data['name'];
+        infoData['description'] = data['description'];
+        infoData['virtual'] = data['virtual'];
+        infoData['enabled'] = data['enabled'];
+        infoData['date'] = data['date'];
+        cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
+        cardInfo.setNotEditables(['date']);
+        cardInfo.render('#pageContent');
+
+        $('#pageContent').append('<br/>');
+        
+        paramsData = {}
+        parameters = data['parameters'];
+        for(var i=0; i<parameters.length; i++) {
+          paramsData[parameters[i]['name']] = parameters[i]['value'];
         }
-        FGGUI.mod_data = Object.assign({}, FGGUI.fg_data);
-        $('#tableInfraParams tr:last').after(table_rows);
-        $(document).on('click', '.row_data', function(e) {
-          e.preventDefault(); 
-          //make div editable
-          $(this).closest('div').attr('contenteditable', 'true');
-          //add bg css
-          $(this).addClass('bg-warning').css('padding','0px');
-          $(this).focus();
-          FGGUI.fg_currfield = $(this).text();
-        });
-        $(document).on('focusout', '.row_data', function(e) {
-          e.preventDefault();
-          var row_id = $(this).closest('tr').attr('row_id'); 
-          var row_div = $(this);
-          $(this).removeClass('bg-warning');
-          $(this).css('padding','');
-          var col_name = row_div.attr('col_name'); 
-          var col_val = row_div.html();
-          console.log(col_name + ' = ' + col_val);
-          FGGUI.mod_data[col_name] = col_val;
-          // Check if any change happened
-          FGGUI.fg_modfied = false;
-          for (var key in FGGUI.fg_data) {
-            var v1 = FGGUI.fg_data[key];
-            var v2 = FGGUI.mod_data[key];
-            if(v1 != v2) {
-              FGGUI.fg_modfied = true;
-            } else {
-              FGGUI.mod_data[key] = FGGUI.fg_data[key];
-            }
-          }
-        });
+        cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
+        cardParams.setIcon('<i class="fas fa-list-ul"></i>');
+        cardParams.render('#pageContent');
       },
       function(data) {
         $('#pageContent').html(
