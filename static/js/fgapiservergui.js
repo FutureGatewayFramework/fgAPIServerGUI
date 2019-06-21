@@ -226,6 +226,66 @@ function updateInfrastructures() {
   }
 }
 
+function trimLastSlash(s) {
+  return s[s.length-1]=='/'?s.substr(0,x.length-1):s;
+}
+
+// Updatign single application
+function updateApplication() {
+  if(FGGUI.fg_logged) {
+    console.log('app logged');
+    var app_id = $('#breadcumbBar').find('li').last().text();
+    loadApplication(
+      app_id,
+      FGGUI.fg_endpoint,
+      FGGUI.fg_accesstoken,
+      function(data) {
+        var infoData = {};
+        infoData['name'] = data['name'];
+        infoData['description'] = data['description'];
+        infoData['outcome'] = data['outcome'];
+        infoData['enabled'] = data['enabled'];
+        //infoData['date'] = data['date'];
+        cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
+        //cardInfo.setNotEditables(['date']);
+        cardInfo.render('#pageContent');
+        $('#pageContent').append('<br/>');
+        var paramsData = {};
+        parameters = data['parameters'];
+        for(var i=0; i<parameters.length; i++) {
+          paramsData[parameters[i]['name']] = parameters[i]['value'];
+        }
+        cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
+        cardParams.setIcon('<i class="fas fa-list-ul"></i>');
+        cardParams.render('#pageContent');
+        $('#pageContent').append('<br/>');
+        var filesData = {};
+        files = data['files'];
+        var fileNames = [];
+        for(var i=0; i<files.length; i++) {
+          var file_endpoint = trimLastSlash(files[i]['url']);
+          filesData[files[i]['name']] = '<a href="' + FGGUI.fg_endpoint + APPSTATE.apiver + '/' + file_endpoint + '">' + files[i]['path'] + '</a>';
+          fileNames.push(files[i]['name']);
+        }
+        fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
+        fileParams.setIcon('<i class="fas fa-folder"></i>');
+        fileParams.setNotEditables(fileNames);
+        fileParams.render('#pageContent');
+
+      },
+      function(data) {
+        $('#pageContent').html(
+          '<div class="alert alert-primary" role="alert">' +
+          'Unable to load application information having id: ' + app_id +
+          '</div>');
+      });
+  } else if(FGGUI.fg_checked) {
+    $('#pageContent').html(loginAlert);
+  } else {
+    $('#pageContent').html(checkAlert);
+  }
+}
+
 // Updatgin Applications elements
 function updateApplications() {
   console.log("Handling Applications page");
@@ -383,6 +443,15 @@ function updateInterface() {
         '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
         '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/applications">Applications</li>');
       updateApplications();
+    break;
+    case 'application':
+      var pages_array = APPSTATE.pageaddr.split('/');
+      var app_id = pages_array[pages_array.length - 1];
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/applications">Applications</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/applications/'+ app_id +'">' + app_id + '</li>');
+      updateApplication();
     break;
     case 'tasks':
       $('#breadcumbBar').html(

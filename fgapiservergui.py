@@ -72,6 +72,7 @@ fgAPIs = FutureGatewayAPIs(
 # Generate application state object
 app_state = {
     'fgapis': fgAPIs,
+    'apiver': fg_config['fgapiver'],
     'url_prefix':
         '/' + fg_config['url_prefix']
         if fg_config['url_prefix'] != '' and fg_config['url_prefix'][0] != '/'
@@ -139,7 +140,7 @@ def infras():
 
 # Infrastructure(x)
 @app.route('/infrastructures/<infra_id>')
-def infras_id(infra_id):
+def infra_id(infra_id):
     logging.debug('page: infrastructures/' + infra_id)
     app_state['page'] = 'Infrastructure'
     app_state['pageaddr'] =\
@@ -156,6 +157,19 @@ def applications():
     app_state['page'] = 'Applications'
     app_state['pageaddr'] = '/applications'
     return render_template('applications.html', app_state=app_state)
+
+# Application(x)
+@app.route('/applications/<app_id>')
+def app_id(app_id):
+    logging.debug('page: applications/' + app_id)
+    app_state['page'] = 'Application'
+    app_state['pageaddr'] =\
+        '/applications/' + app_id
+    return render_template(
+        'application.html',
+        app_state=app_state,
+        app_id=app_id)
+
 
 # Tasks
 @app.route('/tasks')

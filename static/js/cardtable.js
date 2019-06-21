@@ -14,14 +14,24 @@ function cardtable(name, title, text, tabname, data) {
   this.card_modified = false;
   this.card_noteditables = [];
   this.card_code = function() {
+    var card_struct = '';
+    if(Object.keys(this.card_data).length != 0) {
+      card_table =
+        '   <table class="table table-hover" id="' + this.card_tabname + '">' +
+        '    <tr><th>Name</th><th>Value</th></tr>' +
+        '   </table>';
+    } else {
+      card_table =
+        '<div class="alert alert-primary" role="alert" id="alertContent">' +
+        title + ' not available' +
+        '</div>';
+    }
     return '<div class="card" id="' + this.card_name + '">' +
            '  <div class="card-header">' +
-           '    <h6>' + this.card_icon + ' - ' + this.card_title + '</h6>' +
+           '    <h6>' + this.card_icon + ' ' + this.card_title + '</h6>' +
            '  </div>' +
            '  <div class="card-body">' + this.card_text +
-           '   <table class="table table-hover" id="' + this.card_tabname + '">' +
-           '    <tr><th>Name</th><th>Value</th></tr>' +
-           '   </table>' +
+           '  ' + card_table +
            '  </div>' +
            '<!--' +
            '  <div class="card-footer text-muted">' +

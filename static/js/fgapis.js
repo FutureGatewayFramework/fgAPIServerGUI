@@ -178,7 +178,6 @@ function loadApplications(fg_endpoint, fg_token, successFn, failedFn) {
     doGet("applications",
       function(data) {
         FGAPIs.setAuth(prev_auth_mode);
-        console.log('applications: ' + JSON.stringify(data));
         successFn(data);
       },
       function(data) {
@@ -188,6 +187,22 @@ function loadApplications(fg_endpoint, fg_token, successFn, failedFn) {
       });
 }
 
+function loadApplication(app_id, fg_endpoint, fg_token, successFn, failedFn) {
+  FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("applications/" + app_id,
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        console.log('applications: ' + JSON.stringify(data));
+        successFn(data);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(data);
+      });
+}
 
 /*
  * Low level functions handling FG API calls
