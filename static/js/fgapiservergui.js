@@ -246,6 +246,7 @@ function updateApplication() {
       fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
       fileParams.setIcon('<i class="fas fa-folder"></i>');
       fileParams.setNotEditables(fileNames);
+      fileParams.setHeader(false);
       fileParams.render('#pageContent');
     },
     function(data) {

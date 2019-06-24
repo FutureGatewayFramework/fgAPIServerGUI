@@ -11,14 +11,20 @@ function cardtable(name, title, text, tabname, data) {
   this.card_text = text;
   this.card_tabname = tabname;
   this.card_data = data;
+  this.card_tabheader = true;
   this.card_modified = false;
   this.card_noteditables = [];
   this.card_code = function() {
     var card_struct = '';
+    var card_table = '';
+    var card_table_header = '<th>Name</th><th>Value</th>';
     if(Object.keys(this.card_data).length != 0) {
+      if(this.card_tabheader != true) {
+        card_table_header = '';
+      }
       card_table =
         '   <table class="table table-hover" id="' + this.card_tabname + '">' +
-        '    <tr><th>Name</th><th>Value</th></tr>' +
+        '     <tr>' + card_table_header + '</tr>';
         '   </table>';
     } else {
       card_table =
@@ -38,6 +44,9 @@ function cardtable(name, title, text, tabname, data) {
            '  </div>' +
            '-->' +
            '</div>';
+  }
+  this.setHeader = function(headerMode) {
+    this.card_tabheader = headerMode;
   }
   this.notEditables = function() {
     return this.card_noteditables;
