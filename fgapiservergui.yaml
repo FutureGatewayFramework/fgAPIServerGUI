@@ -26,7 +26,7 @@
 # fgapiserverdaemon settings
 fgapiservergui:
   service_name: FutureGateway API Server GUI
-  url_prefix: 'fgapiservergui' 
+  url_prefix: ''
   debug: True
   json_indent: 4
   logging_conf: logging.conf

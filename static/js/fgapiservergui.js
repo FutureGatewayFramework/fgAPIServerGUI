@@ -239,14 +239,14 @@ function updateApplication() {
       var fileNames = [];
       for(var i=0; i<files.length; i++) {
         var file_endpoint = trimLastSlash(files[i]['url']);
-        filesData[files[i]['name']] = '<a href="' + FGGUI.fg_endpoint + APPSTATE.apiver + '/' + file_endpoint + '">' + files[i]['path'] + '</a>';
+        filesData[files[i]['name']] =
+          '<a href="' + APPSTATE.url_prefix + '/' + file_endpoint + '&lpath=' + APPSTATE.fg_appsdir + '"><i class="fas fa-file-download"></i></a>';
         fileNames.push(files[i]['name']);
       }
       fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
       fileParams.setIcon('<i class="fas fa-folder"></i>');
       fileParams.setNotEditables(fileNames);
       fileParams.render('#pageContent');
-
     },
     function(data) {
       $('#pageContent').html(
@@ -329,7 +329,6 @@ if(FGGUI.fg_checked) {
     $('#settingsNavIcoImg').prop('class', 'fas fa-check');
     $('#loginNav').show();
     if(FGGUI.fg_logged) {
-      $('#pageContent').append('roles');
       $('#loginNavIco').prop('class', 'badge badge-primary');
       $('#loginNavIcoImg').prop('class', 'fas fa-check');
       $('#alertContent').hide();

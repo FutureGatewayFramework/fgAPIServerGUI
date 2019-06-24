@@ -29,7 +29,7 @@ from fgapiservergui_tools import\
     check_db_reg,\
     check_db_queries
 from fgapiservergui_queries import fg_queries, fgQueriesError
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask import render_template
 
 """
@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-18 14:46:39'
+__update__ = '2019-06-24 11:41:55'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -202,6 +202,35 @@ def roles():
     app_state['page'] = 'Roles'
     app_state['pageaddr'] = '/roles'
     return render_template('roles.html', app_state=app_state)
+
+
+@app.route('/file', methods=['GET', ])
+def file():
+    logging.debug('serving file(%s): %s'
+                  % (request.method, request.values.to_dict()))
+    serve_file = None
+    file_path = request.values.get('path', None)
+    file_name = request.values.get('name', None)
+    file_lpath = request.values.get('lpath', None)
+    if request.method == 'GET':
+        try:
+            serve_file = open('%s/%s/%s'
+                              % (file_lpath, file_path, file_name), 'rb')
+            serve_file_content = serve_file.read()
+            resp = Response(serve_file_content, status=200)
+            resp.headers['Content-type'] = 'application/octet-stream'
+            resp.headers.add('Content-Disposition',
+                             'attachment; filename="%s"' % file_name)
+            return resp
+        except IOError as e:
+            response = {
+                "message": "Unable to get file: %s/%s\n%s" %
+                           (file_path, file_name, e)}
+            state = 404
+        finally:
+            if serve_file is not None:
+                serve_file.close()
+    return ""
 
 
 # Executing in standalone mode (debug)
