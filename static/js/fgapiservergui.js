@@ -113,117 +113,93 @@ var checkAlert =
 // Updatgin Home elements
 function updateHome() {
   console.log("Handling home page");
-  if(!FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').html(checkAlert);
-    return;
-  }
-  if(FGGUI.fg_logged) {
-    var guiData = {};
-    guiData['Node'] = APPSTATE.gui_node;
-    guiData['Platform'] = APPSTATE.gui_platform;
-    guiData['Python version'] = APPSTATE.python_ver;
-    cardGui = new cardtable('guiInfo', 'Information', '', 'guiInfo', guiData);
-    cardGui.setNotEditables(['Node', 'Platform', 'Python version']);
-    cardGui.render('#pageContent');
-    $('#pageContent').append('<br/>');
-    var apisData = {};
-    apisData['Endpoint'] = APPSTATE.apiserver;
-    apisData['MySQL version'] = APPSTATE.mysqlver;
-    apisData['DB Version'] = APPSTATE.dbver;
-    apisData['Last update'] =  APPSTATE.dbdate;
-    cardApis = new cardtable('apisInfo', 'API Server Information', '', 'apisInfo', apisData);
-    cardApis.setNotEditables(['Endpoint', 'MySQL version', 'DB Version', 'Last update']);
-    cardApis.render('#pageContent');
-    $('#tbl_apiserver').text(FGGUI.fg_endpoint);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').html(loginAlert);
-  }
+  var guiData = {};
+  guiData['Node'] = APPSTATE.gui_node;
+  guiData['Platform'] = APPSTATE.gui_platform;
+  guiData['Python version'] = APPSTATE.python_ver;
+  cardGui = new cardtable('guiInfo', 'Information', '', 'guiInfo', guiData);
+  cardGui.setNotEditables(['Node', 'Platform', 'Python version']);
+  cardGui.render('#pageContent');
+  $('#pageContent').append('<br/>');
+  var apisData = {};
+  apisData['Endpoint'] = APPSTATE.apiserver;
+  apisData['MySQL version'] = APPSTATE.mysqlver;
+  apisData['DB Version'] = APPSTATE.dbver;
+  apisData['Last update'] =  APPSTATE.dbdate;
+  cardApis = new cardtable('apisInfo', 'API Server Information', '', 'apisInfo', apisData);
+  cardApis.setNotEditables(['Endpoint', 'MySQL version', 'DB Version', 'Last update']);
+  cardApis.render('#pageContent');
+  $('#tbl_apiserver').text(FGGUI.fg_endpoint);
 }
 
 // Updatign single infrastructure
 function updateInfrastructure() {
-  if(FGGUI.fg_logged) {
-    var infra_id = $('#breadcumbBar').find('li').last().text();
-    loadInfrastructure(
-      infra_id,
-      FGGUI.fg_endpoint,
-      FGGUI.fg_accesstoken,
-      function(data) {
-        var infoData = {};
-        infoData['name'] = data['name'];
-        infoData['description'] = data['description'];
-        infoData['virtual'] = data['virtual'];
-        infoData['enabled'] = data['enabled'];
-        infoData['date'] = data['date'];
-        cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
-        cardInfo.setNotEditables(['date']);
-        cardInfo.render('#pageContent');
-        $('#pageContent').append('<br/>');
-        var paramsData = {}
-        parameters = data['parameters'];
-        for(var i=0; i<parameters.length; i++) {
-          paramsData[parameters[i]['name']] = parameters[i]['value'];
-        }
-        cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
-        cardParams.setIcon('<i class="fas fa-list-ul"></i>');
-        cardParams.render('#pageContent');
-      },
-      function(data) {
-        $('#pageContent').html(
-          '<div class="alert alert-primary" role="alert">' +
-          'Unable to load infrastructure information having id: ' + infra_id +
-          '</div>');
-      });
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html(loginAlert);
-  } else {
-    $('#pageContent').html(checkAlert);
-  }
+  var infra_id = $('#breadcumbBar').find('li').last().text();
+  loadInfrastructure(
+    infra_id,
+    FGGUI.fg_endpoint,
+    FGGUI.fg_accesstoken,
+    function(data) {
+      var infoData = {};
+      infoData['name'] = data['name'];
+      infoData['description'] = data['description'];
+      infoData['virtual'] = data['virtual'];
+      infoData['enabled'] = data['enabled'];
+      infoData['date'] = data['date'];
+      cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
+      cardInfo.setNotEditables(['date']);
+      cardInfo.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      var paramsData = {}
+      parameters = data['parameters'];
+      for(var i=0; i<parameters.length; i++) {
+        paramsData[parameters[i]['name']] = parameters[i]['value'];
+      }
+      cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
+      cardParams.setIcon('<i class="fas fa-list-ul"></i>');
+      cardParams.render('#pageContent');
+    },
+    function(data) {
+      $('#pageContent').html(
+        '<div class="alert alert-primary" role="alert">' +
+        'Unable to load infrastructure information having id: ' + infra_id +
+        '</div>');
+    });
 }
 
 // Updating Infrastructure elements
 function updateInfrastructures() {
   console.log("Handling Infrastructures page");
   // Check the FG endpoint
-  if(FGGUI.fg_logged) {
-    loadInfrastructures(
-      FGGUI.fg_endpoint,
-      FGGUI.fg_accesstoken,
-      function(data) {
-        FGGUI['infrastructures'] = data['infrastructures'];
-        if(FGGUI.infrastructures.length > 0) {
-          rowclickfn = function(o) {
-            var row_index =  o.currentTarget.rowIndex;
-            var infra_id = $('#' + (row_index-1) + '_' + 'infrastructures').find('div').html().trim();
-            window.location = APPSTATE.url_prefix + '/infrastructures/' + infra_id;
-          }
-          var infraRows = data['infrastructures'];
-          var infraCols = ['id', 'name', 'enabled', 'virtual'];
-          infraTable = new infotable('infrastructures', infraCols, infraRows, rowclickfn);
-          infraTable.setNotEditableCols(infraCols);
-          infraTable.render('#pageContent');
-        } else {
-          $('#pageContent').html(
-            '<div class="alert alert-primary" role="alert">' +
-            'No infrastructures available' +
-            '</div>');
+  loadInfrastructures(
+    FGGUI.fg_endpoint,
+    FGGUI.fg_accesstoken,
+    function(data) {
+      FGGUI['infrastructures'] = data['infrastructures'];
+      if(FGGUI.infrastructures.length > 0) {
+        rowclickfn = function(o) {
+          var row_index =  o.currentTarget.rowIndex;
+          var infra_id = $('#' + (row_index-1) + '_' + 'infrastructures').find('div').html().trim();
+          window.location = APPSTATE.url_prefix + '/infrastructures/' + infra_id;
         }
-      },
-      function(data) {
-        $('#pageContent').append(
-          '<div class="alert alert-danger" role="alert">' +
-          'Unable to recover infrastructures, please check your user rights or authorization configuration' +
+        var infraRows = data['infrastructures'];
+        var infraCols = ['id', 'name', 'enabled', 'virtual'];
+        infraTable = new infotable('infrastructures', infraCols, infraRows, rowclickfn);
+        infraTable.setNotEditableCols(infraCols);
+        infraTable.render('#pageContent');
+      } else {
+        $('#pageContent').html(
+          '<div class="alert alert-primary" role="alert">' +
+          'No infrastructures available' +
           '</div>');
-        });
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').html(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').html(checkAlert);
-  }
+      }
+    },
+    function(data) {
+      $('#pageContent').append(
+        '<div class="alert alert-danger" role="alert">' +
+        'Unable to recover infrastructures, please check your user rights or authorization configuration' +
+        '</div>');
+      });
 }
 
 function trimLastSlash(s) {
@@ -232,185 +208,144 @@ function trimLastSlash(s) {
 
 // Updatign single application
 function updateApplication() {
-  if(FGGUI.fg_logged) {
-    console.log('app logged');
-    var app_id = $('#breadcumbBar').find('li').last().text();
-    loadApplication(
-      app_id,
-      FGGUI.fg_endpoint,
-      FGGUI.fg_accesstoken,
-      function(data) {
-        var infoData = {};
-        infoData['name'] = data['name'];
-        infoData['description'] = data['description'];
-        infoData['outcome'] = data['outcome'];
-        infoData['enabled'] = data['enabled'];
-        //infoData['date'] = data['date'];
-        cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
-        //cardInfo.setNotEditables(['date']);
-        cardInfo.render('#pageContent');
-        $('#pageContent').append('<br/>');
-        var paramsData = {};
-        parameters = data['parameters'];
-        for(var i=0; i<parameters.length; i++) {
-          paramsData[parameters[i]['name']] = parameters[i]['value'];
-        }
-        cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
-        cardParams.setIcon('<i class="fas fa-list-ul"></i>');
-        cardParams.render('#pageContent');
-        $('#pageContent').append('<br/>');
-        var filesData = {};
-        files = data['files'];
-        var fileNames = [];
-        for(var i=0; i<files.length; i++) {
-          var file_endpoint = trimLastSlash(files[i]['url']);
-          filesData[files[i]['name']] = '<a href="' + FGGUI.fg_endpoint + APPSTATE.apiver + '/' + file_endpoint + '">' + files[i]['path'] + '</a>';
-          fileNames.push(files[i]['name']);
-        }
-        fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
-        fileParams.setIcon('<i class="fas fa-folder"></i>');
-        fileParams.setNotEditables(fileNames);
-        fileParams.render('#pageContent');
+  console.log('app logged');
+  var app_id = $('#breadcumbBar').find('li').last().text();
+  loadApplication(
+    app_id,
+    FGGUI.fg_endpoint,
+    FGGUI.fg_accesstoken,
+    function(data) {
+      var infoData = {};
+      infoData['name'] = data['name'];
+      infoData['description'] = data['description'];
+      infoData['outcome'] = data['outcome'];
+      infoData['enabled'] = data['enabled'];
+      //infoData['date'] = data['date'];
+      cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
+      //cardInfo.setNotEditables(['date']);
+      cardInfo.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      var paramsData = {};
+      parameters = data['parameters'];
+      for(var i=0; i<parameters.length; i++) {
+        paramsData[parameters[i]['name']] = parameters[i]['value'];
+      }
+      cardParams = new cardtable('cardParams', 'Parameters', '', 'cardParams', paramsData);
+      cardParams.setIcon('<i class="fas fa-list-ul"></i>');
+      cardParams.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      var filesData = {};
+      files = data['files'];
+      var fileNames = [];
+      for(var i=0; i<files.length; i++) {
+        var file_endpoint = trimLastSlash(files[i]['url']);
+        filesData[files[i]['name']] = '<a href="' + FGGUI.fg_endpoint + APPSTATE.apiver + '/' + file_endpoint + '">' + files[i]['path'] + '</a>';
+        fileNames.push(files[i]['name']);
+      }
+      fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
+      fileParams.setIcon('<i class="fas fa-folder"></i>');
+      fileParams.setNotEditables(fileNames);
+      fileParams.render('#pageContent');
 
-      },
-      function(data) {
-        $('#pageContent').html(
-          '<div class="alert alert-primary" role="alert">' +
-          'Unable to load application information having id: ' + app_id +
-          '</div>');
-      });
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html(loginAlert);
-  } else {
-    $('#pageContent').html(checkAlert);
-  }
+    },
+    function(data) {
+      $('#pageContent').html(
+        '<div class="alert alert-primary" role="alert">' +
+        'Unable to load application information having id: ' + app_id +
+        '</div>');
+    });
 }
 
 // Updatgin Applications elements
 function updateApplications() {
   console.log("Handling Applications page");
-  if(FGGUI.fg_logged) {
-    loadApplications(
-      FGGUI.fg_endpoint,
-      FGGUI.fg_accesstoken,
-      function(data) {
-        FGGUI['applications'] = data['applications'];
-        if(FGGUI.applications.length > 0) {
-          rowclickfn = function(o) {
-            var row_index =  o.currentTarget.rowIndex;
-            var app_id = $('#' + (row_index-1) + '_' + 'applications').find('div').html().trim();
-            window.location = APPSTATE.url_prefix + '/applications/' + app_id;
-          }
-          var appsRows = data['applications'];
-          var appsCols = ['id', 'name', 'outcome', 'enabled'];
-          appsTable = new infotable('applications', appsCols, appsRows, rowclickfn);
-          appsTable.setNotEditableCols(appsCols);
-          appsTable.render('#pageContent');
-        } else {
-          $('#pageContent').html(
-            '<div class="alert alert-primary" role="alert">' +
-            'No infrastructures available' +
-            '</div>');
+  loadApplications(
+    FGGUI.fg_endpoint,
+    FGGUI.fg_accesstoken,
+    function(data) {
+      FGGUI['applications'] = data['applications'];
+      if(FGGUI.applications.length > 0) {
+        rowclickfn = function(o) {
+          var row_index =  o.currentTarget.rowIndex;
+          var app_id = $('#' + (row_index-1) + '_' + 'applications').find('div').html().trim();
+          window.location = APPSTATE.url_prefix + '/applications/' + app_id;
         }
-      },
-      function(data) {
-        $('#pageContent').append(
-          '<div class="alert alert-danger" role="alert">' +
-          'Unable to recover infrastructures, please check your user rights or authorization configuration' +
+        var appsRows = data['applications'];
+        var appsCols = ['id', 'name', 'outcome', 'enabled'];
+        appsTable = new infotable('applications', appsCols, appsRows, rowclickfn);
+        appsTable.setNotEditableCols(appsCols);
+        appsTable.render('#pageContent');
+      } else {
+        $('#pageContent').html(
+          '<div class="alert alert-primary" role="alert">' +
+          'No infrastructures available' +
           '</div>');
-        });
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').append(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').append(checkAlert);
-  }
+      }
+    },
+    function(data) {
+      $('#pageContent').append(
+        '<div class="alert alert-danger" role="alert">' +
+        'Unable to recover infrastructures, please check your user rights or authorization configuration' +
+        '</div>');
+      });
 }
 
 // Updatgin Tasks elements
 function updateTasks() {
   console.log("Handling Tasks page");
-  if(FGGUI.fg_logged) {
-    $('#pageContent').append('Tasks');
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').append(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').append(checkAlert);
-  }
 }
 
 // Updatgin Users elements
 function updateUsers() {
   console.log("Handling Users page");
-  if(FGGUI.fg_logged) {
-    $('#pageContent').append('Users');
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').append(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').append(checkAlert);
-  }
 }
 
 // Updatgin Groups elements
 function updateGroups() {
   console.log("Handling Groups page");
-  if(FGGUI.fg_logged) {
-    $('#pageContent').append('groups');
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').append(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').append(checkAlert);
-  }
 }
 
 // Updatgin Roles elements
 function updateRoles() {
   console.log("Handling Roles page");
-  if(FGGUI.fg_logged) {
-    $('#pageContent').append('roles');
-  } else if(FGGUI.fg_checked) {
-    $('#pageContent').html('');
-    $('#pageContent').append(loginAlert);
-  } else {
-    $('#pageContent').html('');
-    $('#pageContent').append(checkAlert);
-  }
 }
 
 // Use variable values to determine the correct interface
 function updateInterface() {
-  // FGAPI Server checked flag
-  if(FGGUI.fg_checked) {
+
+  // Set fg_endpoint into the dialog box text control
+  $('#fgTestURL').prop('placeholder', FGGUI.fg_endpoint);
+  $('#searchForm').hide();
+
+
+if(FGGUI.fg_checked) {
+    $('#loginNavIco').prop('class', 'badge badge-danger');
+    $('#loginNavIcoImg').prop('class', 'fas fa-times');
+    $('#pageContent').html('');
+    $('#pageContent').append(loginAlert);
     $('#fgCheckedButton').prop('class', 'btn btn-primary');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-check');
     $('#settingsNavIco').prop('class', 'badge badge-primary');
     $('#settingsNavIcoImg').prop('class', 'fas fa-check');
     $('#loginNav').show();
+    if(FGGUI.fg_logged) {
+      $('#pageContent').append('roles');
+      $('#loginNavIco').prop('class', 'badge badge-primary');
+      $('#loginNavIcoImg').prop('class', 'fas fa-check');
+      $('#alertContent').hide();
+    } else {
+      return;
+    }
   } else {
+    $('#pageContent').html('');
+    $('#pageContent').append(checkAlert);
     $('#fgCheckedButton').prop('class', 'btn btn-danger');
     $('#fgCheckedButton').find('i').prop('class', 'fas fa-times');
     $('#settingsNavIco').prop('class', 'badge badge-danger');
     $('#settingsNavIcoImg').prop('class', 'fas fa-times');
     $('#loginNav').hide();
+    return;
   }
-  // FGAPI Logged user flag
-  if(FGGUI.fg_logged) {
-    $('#loginNavIco').prop('class', 'badge badge-primary');
-    $('#loginNavIcoImg').prop('class', 'fas fa-check');
-  } else {
-    $('#loginNavIco').prop('class', 'badge badge-danger');
-    $('#loginNavIcoImg').prop('class', 'fas fa-times');
-  }
-
-  $('#fgTestURL').prop('placeholder', FGGUI.fg_endpoint);
-  $('#searchForm').hide();
 
   // Get rendered page
   page = APPSTATE.page;
