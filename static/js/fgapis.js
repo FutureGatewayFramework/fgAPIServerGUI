@@ -194,7 +194,39 @@ function loadApplication(app_id, fg_endpoint, fg_token, successFn, failedFn) {
     doGet("applications/" + app_id,
       function(data) {
         FGAPIs.setAuth(prev_auth_mode);
-        console.log('applications: ' + JSON.stringify(data));
+        successFn(data);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(data);
+      });
+}
+
+function loadTasks(fg_endpoint, fg_token, url_opts, successFn, failedFn) {
+  FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("tasks" + url_opts,
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        successFn(data);
+      },
+      function(data) {
+        FGAPIs.access_token = '';
+        FGAPIs.setAuth(prev_auth_mode);
+        failedFn(data);
+      });
+}
+
+function loadTask(task_id, fg_endpoint, fg_token, url_opts, successFn, failedFn) {
+  FGAPIs.setEndPoint(fg_endpoint);
+    FGAPIs.access_token = fg_token;
+    var prev_auth_mode = FGAPIs.setAuth('BASELINE_TOKEN');
+    doGet("tasks/" + task_id + url_opts,
+      function(data) {
+        FGAPIs.setAuth(prev_auth_mode);
+        console.log('task: ' + JSON.stringify(data));
         successFn(data);
       },
       function(data) {

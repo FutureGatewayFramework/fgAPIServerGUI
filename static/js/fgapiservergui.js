@@ -240,7 +240,7 @@ function updateApplication() {
       for(var i=0; i<files.length; i++) {
         var file_endpoint = trimLastSlash(files[i]['url']);
         filesData[files[i]['name']] =
-          '<a href="' + APPSTATE.url_prefix + '/' + file_endpoint + '&lpath=' + APPSTATE.fg_appsdir + '"><i class="fas fa-file-download"></i></a>';
+          '<a href="' + APPSTATE.url_prefix + '/' + file_endpoint + '&token=' + FGAPIs.access_token + '&lpath=' + APPSTATE.fg_appsdir + '"><i class="fas fa-file-download"></i></a>';
         fileNames.push(files[i]['name']);
       }
       fileParams = new cardtable('fileParams', 'Files', '', 'fileParams', filesData);
@@ -291,9 +291,128 @@ function updateApplications() {
       });
 }
 
+// Updating single task
+function updateTask() {
+  console.log('task logged');
+  var task_id = $('#breadcumbBar').find('li').last().text();
+  loadTask(
+    task_id,
+    FGGUI.fg_endpoint,
+    FGGUI.fg_accesstoken,
+    '?user=*',
+    function(data) {
+      // Generic info
+      var infoData = {};
+      infoData['status'] = data['status'];
+      infoData['description'] = data['description'];
+      infoData['creation'] = data['creation'];
+      infoData['iosandbox'] = data['iosandbox'];
+      infoData['application'] = data['application'];
+      infoData['user'] = data['user'];
+      cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
+      cardInfo.setNotEditables(['id', 'status', 'creation', 'application']);
+      cardInfo.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      var argsData = {};
+      args = data['arguments'];
+      for(var i=0; i<args.length; i++) {
+        argsData['' + (1 + i)] = args[i];
+      }
+      cardArgs = new cardtable('cardArgs', 'Arguments', '', 'cardArgs', argsData);
+      cardArgs.setIcon('<i class="fas fa-list-ul"></i>');
+      var notEditableCols=[];
+      for(var i=0; i<args.length; i++) {
+        notEditableCols.push(''+(1+i));
+      }
+      cardArgs.setNotEditables(notEditableCols);
+      cardArgs.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      var inputFilesData = {};
+      input_files = data['input_files'];
+      // input files
+      var fileNames = [];
+      for(var i=0; i<input_files.length; i++) {
+        var file_endpoint = trimLastSlash(input_files[i]['url']);
+        inputFilesData[input_files[i]['name']] =
+          '<a href="' + APPSTATE.url_prefix + '/' + file_endpoint + '&token=' + FGAPIs.access_token + '"><i class="fas fa-file-download"></i></a>';
+        fileNames.push(input_files[i]['name']);
+      }
+      inputFileParams = new cardtable('inputFileParams', 'Input files', '', 'inputFileParams', inputFilesData);
+      inputFileParams.setIcon('<i class="fas fa-folder"></i>');
+      inputFileParams.setNotEditables(fileNames);
+      inputFileParams.setHeader(false);
+      inputFileParams.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      // output files
+      var outputFilesData = {};
+      output_files = data['output_files'];
+      var fileNames = [];
+      for(var i=0; i<output_files.length; i++) {
+        var file_endpoint = trimLastSlash(output_files[i]['url']);
+        outputFilesData[output_files[i]['name']] =
+          '<a href="' + APPSTATE.url_prefix + '/' + file_endpoint + '&token=' + FGAPIs.access_token + '"><i class="fas fa-file-download"></i></a>';
+        fileNames.push(output_files[i]['name']);
+      }
+      outputFileParams = new cardtable('outputFileParams', 'Output files', '', 'outputFileParams', outputFilesData);
+      outputFileParams.setIcon('<i class="fas fa-folder"></i>');
+      outputFileParams.setNotEditables(fileNames);
+      outputFileParams.setHeader(false);
+      outputFileParams.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      // runtime data
+      var runtTimeData = {};
+      runtime_data = data['runtime_data'];
+      for(var i=0; i<runtime_data.length; i++) {
+        runtTimeData[runtime_data[i]['data_name']] =
+          '<a href="#" data-toggle="popover" title="description" data-content="' + runtime_data[i]['data_desc'] + '">' + runtime_data[i]['data_name'] +'</a>';
+      }
+      outputFileParams = new cardtable('runtTimeData', 'Runtime data', '', 'runtTimeData', runtTimeData);
+      outputFileParams.setIcon('<i class="fas fa-database"></i>');
+      outputFileParams.setNotEditables(fileNames);
+      outputFileParams.setHeader(false);
+      outputFileParams.render('#pageContent');
+    },
+    function(data) {
+      $('#pageContent').html(
+        '<div class="alert alert-primary" role="alert">' +
+        'Unable to load runtime data for task having id: ' +task_id +
+        '</div>');
+    });
+}
+
 // Updatgin Tasks elements
 function updateTasks() {
   console.log("Handling Tasks page");
+  loadTasks(
+  FGGUI.fg_endpoint,
+  FGGUI.fg_accesstoken,
+  '?user=*',
+  function(data) {
+    FGGUI['tasks'] = data['tasks'];
+    if(FGGUI.tasks.length > 0) {
+      rowclickfn = function(o) {
+        var row_index =  o.currentTarget.rowIndex;
+        var task_id = $('#' + (row_index-1) + '_' + 'tasks').find('div').html().trim();
+        window.location = APPSTATE.url_prefix + '/tasks/' + task_id;
+      }
+      var tasksRows = data['tasks'];
+      var tasksCols = ['id', 'status', 'description', 'application'];
+      tasksTable = new infotable('tasks', tasksCols, tasksRows, rowclickfn);
+      tasksTable.setNotEditableCols(tasksCols);
+      tasksTable.render('#pageContent');
+    } else {
+      $('#pageContent').html(
+        '<div class="alert alert-primary" role="alert">' +
+        'No tasks available' +
+        '</div>');
+    }
+  },
+  function(data) {
+    $('#pageContent').append(
+      '<div class="alert alert-danger" role="alert">' +
+      'Unable to recover tasks, please check your user rights or authorization configuration' +
+      '</div>');
+    });
 }
 
 // Updatgin Users elements
@@ -309,6 +428,16 @@ function updateGroups() {
 // Updatgin Roles elements
 function updateRoles() {
   console.log("Handling Roles page");
+}
+
+// Not accessible page
+function notAccessiblePage() {
+  console.log("Handling not accessible page");
+  $('#pageContent').html(
+    '<div class="alert alert-danger" role="alert" id="unaccessibleContent">' +
+    '<p>The requested content is not available, please check you have the necessary rights to perform this operation.</p>' +
+    '<p>Go back to the <a href="{{ app_state.url_prefix }}/">home</a> page.</p>' +
+    '</div>');
 }
 
 // Use variable values to determine the correct interface
@@ -348,7 +477,7 @@ if(FGGUI.fg_checked) {
   }
 
   // Get rendered page
-  page = APPSTATE.page;
+  var page = APPSTATE.page;
 
   // Page specific composition
   console.log("Page from breadcumBar: " + page);
@@ -394,6 +523,15 @@ if(FGGUI.fg_checked) {
         '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/tasks">Tasks</li>');
       updateTasks();
     break;
+    case 'task':
+      var pages_array = APPSTATE.pageaddr.split('/');
+      var task_id = pages_array[pages_array.length - 1];
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/tasks">Tasks</li>' +
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/tasks/'+ task_id +'">' + task_id + '</li>');
+      updateTask();
+    break;
     case 'users':
       $('#breadcumbBar').html(
         '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>' +
@@ -412,8 +550,16 @@ if(FGGUI.fg_checked) {
         '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/roles">Roles</li>');
       updateRoles();
     break;
+    case 'notaccessible':
+      $('#breadcumbBar').html(
+      '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>');
+      notAccessiblePage();
+    break;
     default:
+      $('#breadcumbBar').html(
+        '<li class="breadcrumb-item active"><a href="' + APPSTATE.url_prefix + '/">Home</li>');
       console.log("Unhandled page: " + page);
+      return;
   }
 }
 

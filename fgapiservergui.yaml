@@ -31,7 +31,7 @@ fgapiservergui:
   json_indent: 4
   logging_conf: logging.conf
   apiserver: http://localhost/fgapiserver
-  fgapiver: V1.0
+  fgapiver: v1.0
   fgapiserver_user: 'futuregateway'
   fgapiserver_password: 'futuregateway'
 

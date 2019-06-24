@@ -42,7 +42,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-24 11:41:55'
+__update__ = '2019-06-24 17:00:59'
 
 # Create root logger object and configure logger
 logging.config.fileConfig(fg_config['logging_conf'])
@@ -179,6 +179,18 @@ def tasks():
     app_state['pageaddr'] = '/tasks'
     return render_template('tasks.html', app_state=app_state)
 
+# Task(x)
+@app.route('/tasks/<task_id>')
+def task_id(task_id):
+    logging.debug('page: tasks/' + task_id)
+    app_state['page'] = 'Task'
+    app_state['pageaddr'] =\
+        '/tasks/' + task_id
+    return render_template(
+        'task.html',
+        app_state=app_state,
+        task_id=task_id)
+
 # Users
 @app.route('/users')
 def users():
@@ -204,6 +216,7 @@ def roles():
     return render_template('roles.html', app_state=app_state)
 
 
+# File - If passed token is valid serve the given file
 @app.route('/file', methods=['GET', ])
 def file():
     logging.debug('serving file(%s): %s'
@@ -211,26 +224,30 @@ def file():
     serve_file = None
     file_path = request.values.get('path', None)
     file_name = request.values.get('name', None)
-    file_lpath = request.values.get('lpath', None)
+    file_lpath = request.values.get('lpath', '')
+    file_token = request.values.get('token', '')
     if request.method == 'GET':
-        try:
-            serve_file = open('%s/%s/%s'
-                              % (file_lpath, file_path, file_name), 'rb')
-            serve_file_content = serve_file.read()
-            resp = Response(serve_file_content, status=200)
-            resp.headers['Content-type'] = 'application/octet-stream'
-            resp.headers.add('Content-Disposition',
-                             'attachment; filename="%s"' % file_name)
-            return resp
-        except IOError as e:
-            response = {
-                "message": "Unable to get file: %s/%s\n%s" %
-                           (file_path, file_name, e)}
-            state = 404
-        finally:
-            if serve_file is not None:
-                serve_file.close()
-    return ""
+        if fgAPIs.checkToken(file_token) is True:
+            try:
+                serve_file = open('%s/%s/%s'
+                                  % (file_lpath, file_path, file_name), 'rb')
+                serve_file_content = serve_file.read()
+                resp = Response(serve_file_content, status=200)
+                resp.headers['Content-type'] = 'application/octet-stream'
+                resp.headers.add('Content-Disposition',
+                                 'attachment; filename="%s"' % file_name)
+                return resp
+            except IOError as e:
+                response = {
+                    "message": "Unable to get file: %s/%s\n%s" %
+                               (file_path, file_name, e)}
+                state = 404
+            finally:
+                if serve_file is not None:
+                    serve_file.close()
+    app_state['page'] = '!accessible'
+    app_state['pageaddr'] = '/file'
+    return render_template('notaccessible.html', app_state=app_state)
 
 
 # Executing in standalone mode (debug)

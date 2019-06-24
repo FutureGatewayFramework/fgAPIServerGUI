@@ -30,7 +30,7 @@ __version__ = 'v0.0.0'
 __maintainer__ = 'Riccardo Bruno'
 __email__ = 'riccardo.bruno@ct.infn.it'
 __status__ = 'devel'
-__update__ = '2019-06-24 11:41:55'
+__update__ = '2019-06-24 17:00:59'
 
 # Custom logger
 logger = logging.getLogger(__name__)
@@ -219,6 +219,22 @@ class FutureGatewayAPIs():
         logging.debug('userExists(%s)' % username)
         jsonResult = self.doGet('users/' + username)
         return not self.errFlag and jsonResult.get('name', None) == username
+
+    def checkToken(self, token):
+        """
+        Return true if the given token is valid
+        """
+        prevAuth = self.currentAuth
+        self.currentAuth = self.AuthModes['BASELINE_TOKEN']
+        self.baselineToken = token
+        json = self.doGet("auth")
+        logging.debug("Token: '%s' = %s" % (token, json))
+        try:
+            token_info = json.get('token_info', {})
+            checkValue = token_info['valid']
+        except KeyError:
+            checkValue = False
+        return checkValue
 
     def createUser(self,
                    name,
