@@ -140,6 +140,7 @@ function updateInfrastructure() {
     FGGUI.fg_endpoint,
     FGGUI.fg_accesstoken,
     function(data) {
+      // Information
       var infoData = {};
       infoData['name'] = data['name'];
       infoData['description'] = data['description'];
@@ -150,8 +151,9 @@ function updateInfrastructure() {
       cardInfo.setNotEditables(['date']);
       cardInfo.render('#pageContent');
       $('#pageContent').append('<br/>');
+      // Parameters
       var paramsData = {}
-      parameters = data['parameters'];
+      var parameters = data['parameters'];
       for(var i=0; i<parameters.length; i++) {
         paramsData[parameters[i]['name']] = parameters[i]['value'];
       }
@@ -215,6 +217,7 @@ function updateApplication() {
     FGGUI.fg_endpoint,
     FGGUI.fg_accesstoken,
     function(data) {
+      // Information
       var infoData = {};
       infoData['name'] = data['name'];
       infoData['description'] = data['description'];
@@ -225,6 +228,7 @@ function updateApplication() {
       //cardInfo.setNotEditables(['date']);
       cardInfo.render('#pageContent');
       $('#pageContent').append('<br/>');
+      // Parameters
       var paramsData = {};
       parameters = data['parameters'];
       for(var i=0; i<parameters.length; i++) {
@@ -234,6 +238,7 @@ function updateApplication() {
       cardParams.setIcon('<i class="fas fa-list-ul"></i>');
       cardParams.render('#pageContent');
       $('#pageContent').append('<br/>');
+      // Files
       var filesData = {};
       files = data['files'];
       var fileNames = [];
@@ -248,6 +253,16 @@ function updateApplication() {
       fileParams.setNotEditables(fileNames);
       fileParams.setHeader(false);
       fileParams.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      // Infrastructures
+      var infraData = {}
+      var infrastructures = data['infrastructures'];
+      for(var i=0; i<infrastructures.length; i++) {
+        infraData['# ' + (1+i)] = infrastructures[i];
+      }
+      cardInfras = new cardtable('cardInfras', 'Infrastructures', '', 'cardInfras', infraData);
+      cardInfras.setIcon('<i class="fas fa-network-wired"></i>');
+      cardInfras.render('#pageContent');
     },
     function(data) {
       $('#pageContent').html(
@@ -338,7 +353,7 @@ function updateTask() {
         fileNames.push(input_files[i]['name']);
       }
       inputFileParams = new cardtable('inputFileParams', 'Input files', '', 'inputFileParams', inputFilesData);
-      inputFileParams.setIcon('<i class="fas fa-folder"></i>');
+      inputFileParams.setIcon('<i class="fas fa-file-import"></i>');
       inputFileParams.setNotEditables(fileNames);
       inputFileParams.setHeader(false);
       inputFileParams.render('#pageContent');
@@ -354,7 +369,7 @@ function updateTask() {
         fileNames.push(output_files[i]['name']);
       }
       outputFileParams = new cardtable('outputFileParams', 'Output files', '', 'outputFileParams', outputFilesData);
-      outputFileParams.setIcon('<i class="fas fa-folder"></i>');
+      outputFileParams.setIcon('<i class="fas fa-file-export"></i>');
       outputFileParams.setNotEditables(fileNames);
       outputFileParams.setHeader(false);
       outputFileParams.render('#pageContent');
