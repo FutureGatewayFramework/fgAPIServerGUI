@@ -7,6 +7,8 @@
  *                 PTV, for PTV service
  *                 BASELINE_TOKEN, when using baseline authentication
  *                 BASELINE_PARAMS, when authenticating using parameters
+ *
+ * Auhtor: Riccardo Bruno <riccardo.bruno@ct.infn.it>
  */
 
 // Store all FG APIs values

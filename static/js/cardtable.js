@@ -2,6 +2,8 @@
  * cardtable
  *
  * Create a key_name, key_value table, with editable fields
+ *
+ * Auhtor: Riccardo Bruno <riccardo.bruno@ct.infn.it>
  */
 
 function cardtable(name, title, text, tabname, data) {
@@ -14,6 +16,7 @@ function cardtable(name, title, text, tabname, data) {
   this.card_tabheader = true;
   this.card_modified = false;
   this.card_noteditables = [];
+  this.action_element = null;
   this.card_code = function() {
     var card_struct = '';
     var card_table = '';
@@ -89,13 +92,12 @@ function cardtable(name, title, text, tabname, data) {
       e.preventDefault();
       $(this).removeClass('bg-warning');
       $(this).css('padding','');
-      /*
-      var row_id = $(this).closest('tr').attr('row_id');
-      var row_div = $(this);
-      var key_name = row_div.attr('key_name');
-      var key_value = row_div.text();
-      console.log(key_name + '=' + key_value);
-      */
+      var card_name = this.className.split("_")[0];
+      var card_obj = window[card_name];
+      var action_function = card_obj.getActionElement();
+      if(action_function != null) {
+        action_function(card_obj);
+      }
     });
   }
   this.setIcon = function(icon) {
@@ -116,6 +118,12 @@ function cardtable(name, title, text, tabname, data) {
       }
     }
     return this.card_modified;
+  }
+  this.setActionElement = function(actionElement) {
+    this.action_element = actionElement;
+  }
+  this.getActionElement = function() {
+    return this.action_element;
   }
 }
 

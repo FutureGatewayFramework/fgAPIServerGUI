@@ -1,5 +1,31 @@
 /*
  FGAPIServerGUI javascript
+
+ This code mainly provides these two functionalities.
+
+ The !function(l) {} part handles menu and gadget defined inside the base.html
+ template.
+ The $(document).ready(function() at the bottom is responsible of the whole
+ dynamic aspect of the page (almost 100% of the page is dynamically generated).
+
+ Dynamic content uses three important elements
+
+  infotabe
+  cadttable
+  actiontable
+
+infotable is the responsible to present multicolumn values where each column
+can be set editable or not.
+
+cardtable is responsible to present values in the form of key-value, it can
+understand if a value has been changed or not
+
+actiontable is the responsible to present the following actions: 'reload',
+'save' and 'delete' actions. This component takes as input cardtable elements
+and assign to it a given set of function each responsible (in the order): 
+reload, save and delete activity. This element is not yet linked with infotable
+
+Auhtor: Riccardo Bruno <riccardo.bruno@ct.infn.it>
 */
 
 // Store all FG GUI values
@@ -208,6 +234,22 @@ function trimLastSlash(s) {
   return s[s.length-1]=='/'?s.substr(0,x.length-1):s;
 }
 
+function ReloadApplication() {
+  var app_id = $('#breadcumbBar').find('li').last().text();
+  console.log("Reload application having id: " + app_id);
+  location.reload();
+}
+
+function SaveApplication() {
+  var app_id = $('#breadcumbBar').find('li').last().text();
+  console.log("Save application having id: " + app_id);
+}
+
+function DeleteApplication() {
+  var app_id = $('#breadcumbBar').find('li').last().text();
+  console.log("Delete application having id: " + app_id);
+}
+
 // Updatign single application
 function updateApplication() {
   console.log('app logged');
@@ -263,6 +305,23 @@ function updateApplication() {
       cardInfras = new cardtable('cardInfras', 'Infrastructures', '', 'cardInfras', infraData);
       cardInfras.setIcon('<i class="fas fa-network-wired"></i>');
       cardInfras.render('#pageContent');
+      $('#pageContent').append('<br/>');
+      // Actions
+      var inputCards = [cardInfo, cardParams, cardInfras];
+      var actionFunctions = [ReloadApplication, SaveApplication, DeleteApplication];
+      actionTable = new actiontable("actions", "Actions", "", inputCards, actionFunctions);
+      actionTable.render('#pageContent');
+      for(var i=0; i<inputCards.length; i++) {
+        inputCards[i].setActionElement(function(cardTable){
+          if(cardTable.isModified()) {
+            actionTable.enableReload();
+            actionTable.enableSave();
+          } else {
+            actionTable.disableReload();
+            actionTable.disableSave();
+          }
+        });
+      }
     },
     function(data) {
       $('#pageContent').html(
@@ -271,6 +330,8 @@ function updateApplication() {
         '</div>');
     });
 }
+
+
 
 // Updatgin Applications elements
 function updateApplications() {

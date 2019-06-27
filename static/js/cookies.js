@@ -1,5 +1,7 @@
 /*
  Cookie utility functions
+
+ Auhtor: Riccardo Bruno <riccardo.bruno@ct.infn.it>
 */
 
 function createCookie(name,value,days,path) {
