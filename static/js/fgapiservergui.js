@@ -300,7 +300,7 @@ function updateApplication() {
       var infraData = {}
       var infrastructures = data['infrastructures'];
       for(var i=0; i<infrastructures.length; i++) {
-        infraData['# ' + (1+i)] = infrastructures[i];
+        infraData['' + (1+i)] = infrastructures[i];
       }
       cardInfras = new cardtable('cardInfras', 'Infrastructures', '', 'cardInfras', infraData);
       cardInfras.setIcon('<i class="fas fa-network-wired"></i>');
