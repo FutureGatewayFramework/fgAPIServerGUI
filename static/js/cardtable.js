@@ -17,10 +17,12 @@ function cardtable(name, title, text, tabname, data) {
   this.card_modified = false;
   this.card_noteditables = [];
   this.action_element = null;
+  this.card_colname = 'Name';
+  this.card_colvalue = 'Value';
   this.card_code = function() {
     var card_struct = '';
     var card_table = '';
-    var card_table_header = '<th>Name</th><th>Value</th>';
+    var card_table_header = '<th>' + this.card_colname + '</th><th>' + this.card_colvalue +'</th>';
     if(Object.keys(this.card_data).length != 0) {
       if(this.card_tabheader != true) {
         card_table_header = '';
@@ -47,6 +49,10 @@ function cardtable(name, title, text, tabname, data) {
            '  </div>' +
            '-->' +
            '</div>';
+  }
+  this.setHeaderColumns = function(colname, colvalue) {
+    this.card_colname = colname;
+    this.card_colvalue = colvalue;
   }
   this.setHeader = function(headerMode) {
     this.card_tabheader = headerMode;

@@ -268,6 +268,7 @@ function updateApplication() {
       //infoData['date'] = data['date'];
       cardInfo = new cardtable('cardInfo', 'Information', '', 'cardInfo', infoData);
       //cardInfo.setNotEditables(['date']);
+      cardInfo.setHeader(false);
       cardInfo.render('#pageContent');
       $('#pageContent').append('<br/>');
       // Parameters
@@ -304,6 +305,7 @@ function updateApplication() {
       }
       cardInfras = new cardtable('cardInfras', 'Infrastructures', '', 'cardInfras', infraData);
       cardInfras.setIcon('<i class="fas fa-network-wired"></i>');
+      cardInfras.setHeaderColumns('#','Infa Id');
       cardInfras.render('#pageContent');
       $('#pageContent').append('<br/>');
       // Actions
